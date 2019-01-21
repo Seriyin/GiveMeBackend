@@ -9,11 +9,13 @@ import (
 	"fmt"
 
 	"cloud.google.com/go/datastore"
+
+	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/storage"
 )
 
 type profileDB struct {
-	client *datastore.Client
+	client *firestore.Client
 }
 
 type ObjectData struct {
@@ -27,14 +29,13 @@ var _ ProfileDatabase = &profileDB{}
 // newDatastoreDB creates a new ProfileDatabase backed by Cloud Datastore.
 // See the datastore and google packages for details on creating a suitable Client:
 // https://godoc.org/cloud.google.com/go/datastore
-func newProfileDB(client *datastore.Client) (ProfileDatabase, error) {
+func newProfileDB(client *firestore.Client) (ProfileDatabase, error) {
 	ctx := context.Background()
 	// Verify that we can communicate and authenticate with the datastore service.
-	t, err := client.NewTransaction(ctx)
+	err := client.RunTransaction(ctx, func(i context.Context, transaction *firestore.Transaction) error {
+		return nil
+	})
 	if err != nil {
-		return nil, fmt.Errorf("datastoredb: could not connect: %v", err)
-	}
-	if err := t.Rollback(); err != nil {
 		return nil, fmt.Errorf("datastoredb: could not connect: %v", err)
 	}
 	return &profileDB{
@@ -47,26 +48,23 @@ func (db *profileDB) Close() error {
 	return db.client.Close()
 }
 
-func (db *profileDB) datastoreKey(id int64) *datastore.Key {
-	return datastore.IDKey("Profile", id, nil)
-}
-
 // GetProfile retrieves a file by its ID.
 func (db *profileDB) GetProfile(id int64) (*Profile, error) {
 	ctx := context.Background()
 	k := db.datastoreKey(id)
-	profile := &SimpleProfile{}
+	profile := &Profile{}
 	if err := db.client.Get(ctx, k, profile); err != nil {
 		return nil, fmt.Errorf("datastoredb: could not get Profile: %v", err)
 	}
-	profile.ID = id
+	profile.UserId = id
 	return profile, nil
 }
 
 // AddProfile saves a given profile, assigning it a new ID.
 func (db *profileDB) AddProfile(p *Profile) (id int64, err error) {
 	ctx := context.Background()
-	k := datastore.IncompleteKey("Profile", nil)
+	k := db.client.Doc("Profile")
+	k.
 	k, err = db.client.Put(ctx, k, p)
 	if err != nil {
 		return 0, fmt.Errorf("datastoredb: could not put Profile: %v", err)
@@ -87,7 +85,7 @@ func (db *profileDB) DeleteProfile(id int64) error {
 // UpdateProfile updates the entry for a given profile.
 func (db *profileDB) UpdateProfile(p *Profile) error {
 	ctx := context.Background()
-	k := db.datastoreKey(p.ID)
+	k := db.datastoreKey(p.UserId.Id)
 	if _, err := db.client.Put(ctx, k, p); err != nil {
 		return fmt.Errorf("datastoredb: could not update Profile: %v", err)
 	}
@@ -117,4 +115,8 @@ func (db *profileDB) ListFilesSharedBy(userID string) (*Files, error) {
 	}
 
 	return books, nil
+}
+
+func (db *profileDB) ListProfiles() ([]*Profile, error) {
+	return nil, nil
 }
