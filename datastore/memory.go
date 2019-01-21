@@ -17,15 +17,14 @@ var _ ProfileDatabase = &memoryDB{}
 // memoryDB is a simple in-memory persistence layer for profiles.
 type memoryDB struct {
 	mutex    sync.Mutex
-	nextId   int64              // next ID to assign to a profile.
-	profiles map[int64]*Profile // maps from profile ID to profile.
-	files    map[int64]*Files
+	profiles map[string]*Profile // maps from profile ID to profile.
+	files    map[string]*Files
 }
 
 func newMemoryDB() *memoryDB {
 	return &memoryDB{
-		profiles: make(map[int64]*Profile),
-		nextId:   1,
+		profiles: make(map[string]*Profile),
+		files: make(map[string]*Files),
 	}
 }
 
@@ -40,7 +39,7 @@ func (db *memoryDB) Close() error {
 }
 
 // GetProfile retrieves a profile by its ID.
-func (db *memoryDB) GetProfile(id int64) (*Profile, error) {
+func (db *memoryDB) GetProfile(id string) (*Profile, error) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -52,21 +51,18 @@ func (db *memoryDB) GetProfile(id int64) (*Profile, error) {
 }
 
 // AddProfile saves a given profile, assigning it a new ID.
-func (db *memoryDB) AddProfile(p *Profile) (id int64, err error) {
+func (db *memoryDB) AddProfile(p *Profile) (id string, err error) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
-	p.Id = db.nextId
-	db.profiles[p.Id] = p
+	db.profiles[p.UserId.Id] = p
 
-	db.nextId++
-
-	return p.Id, nil
+	return p.UserId.Id, nil
 }
 
 // DeleteProfile removes a given profile by its ID.
-func (db *memoryDB) DeleteProfile(id int64) error {
-	if id == 0 {
+func (db *memoryDB) DeleteProfile(id string) error {
+	if id == "" {
 		return errors.New("memorydb: profile with unassigned ID passed into deleteProfile")
 	}
 
@@ -82,14 +78,14 @@ func (db *memoryDB) DeleteProfile(id int64) error {
 
 // UpdateProfile updates the entry for a given profile.
 func (db *memoryDB) UpdateProfile(p *Profile) error {
-	if p.Id == 0 {
+	if p.UserId.Id == "" {
 		return errors.New("memorydb: profile with unassigned ID passed into updateProfile")
 	}
 
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
-	db.profiles[p.Id] = p
+	db.profiles[p.UserId.Id] = p
 	return nil
 }
 
@@ -97,19 +93,29 @@ func (db *memoryDB) UpdateProfile(p *Profile) error {
 // filtered by the profile who created the files.
 func (db *memoryDB) ListFilesSharedBy(userID string) (*Files, error) {
 	if userID == "" {
-		return db.ListBooks()
+		return nil, errors.New("empty userID for files shared")
 	}
 
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
 	var files Files
-	for _, p := range db.profiles[userId] {
-		if b.CreatedByID == userID {
+	for _, p := range db.files[userID] {
+		if p == userID {
 			books = append(books, b)
 		}
 	}
 
 	sort.Sort(booksByTitle(books))
 	return books, nil
+}
+
+func (db *memoryDB) ListProfiles() ([]*Profile, error) {
+	profiles := make([]*Profile, len(db.profiles))
+	i := 0
+	for _, p := range db.profiles {
+		profiles[i] = p
+		i++
+	}
+	return profiles, nil
 }
