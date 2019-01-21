@@ -2,38 +2,31 @@ package datastore
 
 import (
 	"io"
-	"sort"
-	"time"
 )
 
 type Profile struct {
-	Id           int64
-	UserId		 string
-	DeviceIds	 []string
-	PubKey       io.ReadWriter
-	SignedPreKey io.ReadWriter
-	PreKeyBundle []io.ReadWriter
+	UserId   UID
+	Metadata Metadata
 }
 
-// Files implements sort.Interface, ordering files by timestamp.
-// https://golang.org/pkg/sort/#example__sortWrapper
-type Files interface {
-	sort.Interface
-	getTimeCreated(int64) time.Time
-	getMetadata(int64) *io.Reader
-	getBytes(int64) *io.Reader
+type UID struct {
+	Id     string
+	Device io.ReadWriter
+	PubKey io.ReadWriter
+	Token  io.ReadWriter
+	//	SignedPreKey io.ReadWriter
+	//	PreKeyBundle []io.ReadWriter
 }
 
-type memoryFiles struct {
-	metadata io.ReadWriter
-	bytes    io.ReadWriter
+type Metadata struct {
+	PaymentProviders []PaymentProvider
+	NumberPayments   uint64
 }
 
-type storedFiles struct {
-	files map[int64]ObjectData
-}
 
 type ProfileDatabase interface {
+	IsBlocked()	(bool, error)
+
 	// ListProfiles returns a list of profiles.
 	ListProfiles() ([]*Profile, error)
 
@@ -52,6 +45,9 @@ type ProfileDatabase interface {
 
 	// UpdateProfile updates the entry for a given profile.
 	UpdateProfile(p *Profile) error
+
+	// RegenProfile discards and reinitializes known profile
+	RegenProfile(p *Profile) error
 
 	// Close closes the database, freeing up any available resources.
 	Close() error
