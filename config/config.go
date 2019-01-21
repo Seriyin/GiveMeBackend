@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/Seriyin/GibMe-backend/datastore"
+	data "github.com/Seriyin/GibMe-backend/datastore"
 
 	"cloud.google.com/go/datastore"
 	"cloud.google.com/go/pubsub"
@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	DB          FileDatabase
+	DB          data.ProfileDatabase
 	OAuthConfig *oauth2.Config
 
 	StorageBucket     *storage.BucketHandle
@@ -33,11 +33,11 @@ var (
 func init() {
 	var err error
 
-	var gcpId string
-	var clientCred clientCred
+	cloud_id := os.Getenv("CLOUDAUTHID")
+	cloud_secret := os.Getenv("CLOUDAUTHSECRET")
+	cookie_secret := os.Getenv("COOKIESECRET")
 
 	//Read credentials from local file
-	gcpId, clientCred = readFromConfig()
 
 	// To use the in-memory test database, uncomment the next line.
 	DB = newMemoryDB()
@@ -73,13 +73,13 @@ func init() {
 	// You will also need to update OAUTH2_CALLBACK in app.yaml when pushing to
 	// production.
 	//
-	OAuthConfig = configureOAuthClient("clientid", "clientsecret")
+	OAuthConfig = configureOAuthClient(client_id, client_secret)
 	// [END auth]
 
 	// [START sessions]
 	// Configure storage method for session-wide information.
 	// Update "something-very-secret" with a hard to guess string or byte sequence.
-	cookieStore := sessions.NewCookieStore([]byte("something-very-secret"))
+	cookieStore := sessions.NewCookieStore([]byte(cookie_secret))
 	cookieStore.Options = &sessions.Options{
 		HttpOnly: true,
 	}
