@@ -8,13 +8,41 @@ import (
 	"context"
 	"fmt"
 
-	"cloud.google.com/go/datastore"
-
 	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/storage"
 )
 
-type profileDB struct {
+type FirestoreDatabase interface {
+	IsBlocked(userID string) (bool, error)
+
+	// ListProfiles returns a list of profiles.
+	ListProfiles() ([]*Profile, error)
+
+	// ListFilesSharedBy returns a list of files, ordered by timestamp,
+	// filtered by the user who created the files.
+	ListFilesSharedBy(userID string) (*Files, error)
+
+	// GetProfile retrieves a profile by its ID.
+	GetProfile(userID string) (*Profile, error)
+
+	// AddProfile saves a given profile, assigning it a new ID.
+	AddProfile(p *Profile) (userID string, err error)
+
+	// DeleteProfile removes a given profile by its ID.
+	DeleteProfile(userID string) error
+
+	// UpdateProfile updates the entry for a given profile.
+	UpdateProfile(p *Profile) error
+
+	// RegenProfile discards and reinitializes known profile
+	RegenProfile(p *Profile) error
+
+	// Close closes the database, freeing up any available resources.
+	Close() error
+}
+
+
+type firestoreDB struct {
 	client *firestore.Client
 }
 
@@ -23,13 +51,14 @@ type ObjectData struct {
 	handle *storage.ObjectHandle
 }
 
-// Ensure fileDB conforms to the FileDatabase interface.
-var _ ProfileDatabase = &profileDB{}
+// Ensure firestoreDB conforms to the FirestoreDatabase interface.
+var _ FirestoreDatabase = &firestoreDB{}
 
-// newDatastoreDB creates a new ProfileDatabase backed by Cloud Datastore.
-// See the datastore and google packages for details on creating a suitable Client:
-// https://godoc.org/cloud.google.com/go/datastore
-func newProfileDB(client *firestore.Client) (ProfileDatabase, error) {
+
+// newFirestoreDB creates a new FirestoreDatabase backed by Cloud Firestore.
+// See the firestore and google packages for details on creating a suitable Client:
+// https://godoc.org/cloud.google.com/go/firestore
+func newFirestoreDB(client *firestore.Client) (FirestoreDatabase, error) {
 	ctx := context.Background()
 	// Verify that we can communicate and authenticate with the datastore service.
 	err := client.RunTransaction(ctx, func(i context.Context, transaction *firestore.Transaction) error {
@@ -38,30 +67,31 @@ func newProfileDB(client *firestore.Client) (ProfileDatabase, error) {
 	if err != nil {
 		return nil, fmt.Errorf("datastoredb: could not connect: %v", err)
 	}
-	return &profileDB{
+	return &firestoreDB{
 		client: client,
 	}, nil
 }
 
 // Close closes the database.
-func (db *profileDB) Close() error {
+func (db *firestoreDB) Close() error {
 	return db.client.Close()
 }
 
-// GetProfile retrieves a file by its ID.
-func (db *profileDB) GetProfile(id int64) (*Profile, error) {
+// GetProfile retrieves a profile by its ID.
+func (db *firestoreDB) GetProfile(userID string) (*Profile, error) {
 	ctx := context.Background()
-	k := db.datastoreKey(id)
+	doc := db.client.Collection("profiles").Doc(userID)
 	profile := &Profile{}
-	if err := db.client.Get(ctx, k, profile); err != nil {
+	if docSnap, err := doc.Get(ctx); err != nil {
 		return nil, fmt.Errorf("datastoredb: could not get Profile: %v", err)
 	}
-	profile.UserId = id
+	dataMap := docSnap.
+	profile.UserId = data
 	return profile, nil
 }
 
 // AddProfile saves a given profile, assigning it a new ID.
-func (db *profileDB) AddProfile(p *Profile) (id int64, err error) {
+func (db *firestoreDB) AddProfile(p *Profile) (id int64, err error) {
 	ctx := context.Background()
 	k := db.client.Doc("Profile")
 	k.
@@ -73,7 +103,7 @@ func (db *profileDB) AddProfile(p *Profile) (id int64, err error) {
 }
 
 // DeleteProfile removes a given profile by its ID.
-func (db *profileDB) DeleteProfile(id int64) error {
+func (db *firestoreDB) DeleteProfile(id int64) error {
 	ctx := context.Background()
 	k := db.datastoreKey(id)
 	if err := db.client.Delete(ctx, k); err != nil {
@@ -83,7 +113,7 @@ func (db *profileDB) DeleteProfile(id int64) error {
 }
 
 // UpdateProfile updates the entry for a given profile.
-func (db *profileDB) UpdateProfile(p *Profile) error {
+func (db *firestoreDB) UpdateProfile(p *Profile) error {
 	ctx := context.Background()
 	k := db.datastoreKey(p.UserId.Id)
 	if _, err := db.client.Put(ctx, k, p); err != nil {
@@ -94,7 +124,7 @@ func (db *profileDB) UpdateProfile(p *Profile) error {
 
 // ListFilesSharedBy returns a list of files, ordered by timestamp,
 //filtered by the profile who shared the files.
-func (db *profileDB) ListFilesSharedBy(userID string) (*Files, error) {
+func (db *firestoreDB) ListFilesSharedBy(userID string) (*Files, error) {
 	ctx := context.Background()
 	if userID == "" {
 		return db.ListBooks()
@@ -117,6 +147,6 @@ func (db *profileDB) ListFilesSharedBy(userID string) (*Files, error) {
 	return books, nil
 }
 
-func (db *profileDB) ListProfiles() ([]*Profile, error) {
+func (db *firestoreDB) ListProfiles() ([]*Profile, error) {
 	return nil, nil
 }

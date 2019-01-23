@@ -1,4 +1,4 @@
-package config
+package datastore
 
 import (
 	"context"
@@ -6,9 +6,7 @@ import (
 	"log"
 	"os"
 
-	data "github.com/Seriyin/GibMe-backend/datastore"
-
-	"cloud.google.com/go/datastore"
+	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/pubsub"
 	"cloud.google.com/go/storage"
 
@@ -19,7 +17,7 @@ import (
 )
 
 var (
-	DB          data.ProfileDatabase
+	DB          FirestoreDatabase
 	OAuthConfig *oauth2.Config
 
 	StorageBucket     *storage.BucketHandle
@@ -33,14 +31,15 @@ var (
 func init() {
 	var err error
 
-	cloud_id := os.Getenv("CLOUDAUTHID")
-	cloud_secret := os.Getenv("CLOUDAUTHSECRET")
+	//client_id := os.Getenv("CLOUDAUTHID")
+	//client_secret := os.Getenv("CLOUDAUTHSECRET")
 	cookie_secret := os.Getenv("COOKIESECRET")
+	project_id := os.Getenv("PROJECT_ID")
 
 	//Read credentials from local file
 
 	// To use the in-memory test database, uncomment the next line.
-	DB = newMemoryDB()
+	//DB = newMemoryDB()
 
 	// [START datastore]
 	// To use Cloud Datastore, uncomment the following lines and update the
@@ -48,12 +47,12 @@ func init() {
 	// More options can be set, see the google package docs for details:
 	// http://godoc.org/golang.org/x/oauth2/google
 	//
-	// DB, err = configureDatastoreDB("<your-project-id>")
+	DB, err = configureFirestoreDB(project_id)
 	// [END datastore]
 
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// [START storage]
 	// To configure Cloud Storage, uncomment the following lines and update the
@@ -73,7 +72,7 @@ func init() {
 	// You will also need to update OAUTH2_CALLBACK in app.yaml when pushing to
 	// production.
 	//
-	OAuthConfig = configureOAuthClient(client_id, client_secret)
+	// OAuthConfig = configureOAuthClient(client_id, client_secret)
 	// [END auth]
 
 	// [START sessions]
@@ -97,13 +96,13 @@ func init() {
 	}
 }
 
-func configureDatastoreDB(projectID string) (FileDatabase, error) {
+func configureFirestoreDB(projectID string) (FirestoreDatabase, error) {
 	ctx := context.Background()
-	client, err := datastore.NewClient(ctx, projectID)
+	client, err := firestore.NewClient(ctx, projectID)
 	if err != nil {
 		return nil, err
 	}
-	return newDatastoreDB(client)
+	return newFirestoreDB(client)
 }
 
 func configureStorage(bucketID string) (*storage.BucketHandle, error) {
