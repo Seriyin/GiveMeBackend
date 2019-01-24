@@ -10,8 +10,8 @@ type PaymentProvider interface {
 }
 
 type PaypalProvider struct {
-	Id    string
-	Email string
+	Id    string `firestore:"id" json:"id"`
+	Email string `firestore:"email" json:"email"`
 }
 
 func (p *PaypalProvider) GetId() string {
@@ -27,8 +27,8 @@ func (p *PaypalProvider) GetDetails() interface{} {
 }
 
 type DefaultProvider struct {
-	Id   string
-	IBAN string
+	Id   string `firestore:"id" json:"id"`
+	IBAN string `firestore:"iban"´json:"iban"`
 }
 
 func (d *DefaultProvider) GetId() string {
@@ -36,7 +36,7 @@ func (d *DefaultProvider) GetId() string {
 }
 
 func (d *DefaultProvider) GetUserId() string {
-	return d.Email
+	return d.IBAN
 }
 
 func (d *DefaultProvider) GetDetails() interface{} {

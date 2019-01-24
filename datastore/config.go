@@ -31,9 +31,9 @@ var (
 func init() {
 	var err error
 
-	//client_id := os.Getenv("CLOUDAUTHID")
-	//client_secret := os.Getenv("CLOUDAUTHSECRET")
-	cookie_secret := os.Getenv("COOKIESECRET")
+	//client_id := os.Getenv("CLOUD_AUTH_ID")
+	//client_secret := os.Getenv("CLOUD_AUTH_SECRET")
+	cookie_secret := os.Getenv("COOKIE_SECRET")
 	project_id := os.Getenv("PROJECT_ID")
 
 	//Read credentials from local file
@@ -116,9 +116,7 @@ func configureStorage(bucketID string) (*storage.BucketHandle, error) {
 
 func configurePubsub(projectID string) (*pubsub.Client, error) {
 	if _, ok := DB.(*memoryDB); ok {
-		return nil, errors.New("Pub/Sub worker doesn't work with the in-memory DB " +
-			"(worker does not share its memory as the main app). Configure another " +
-			"database in bookshelf/config.go first (e.g. MySQL, Cloud Datastore, etc)")
+		return nil, errors.New("Pub/Sub worker doesn't work with the in-memory DB ")
 	}
 
 	ctx := context.Background()
@@ -128,13 +126,15 @@ func configurePubsub(projectID string) (*pubsub.Client, error) {
 	}
 
 	// Create the topic if it doesn't exist.
-	if exists, err := client.Topic(PubsubTopicID).Exists(ctx); err != nil {
-		return nil, err
-	} else if !exists {
-		if _, err := client.CreateTopic(ctx, PubsubTopicID); err != nil {
+	/*
+		if exists, err := client.Topic(PubsubTopicID).Exists(ctx); err != nil {
 			return nil, err
+		} else if !exists {
+			if _, err := client.CreateTopic(ctx, PubsubTopicID); err != nil {
+				return nil, err
+			}
 		}
-	}
+	*/
 	return client, nil
 }
 

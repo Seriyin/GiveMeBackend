@@ -1,20 +1,23 @@
 package datastore
 
 type Profile struct {
-	UserId   UID      `firestore:"userid"`
-	Metadata Metadata `firestore:"metadata"`
+	UserId   UID      `firestore:"user_id" json:"user_id"`
+	Metadata Metadata `firestore:"metadata" json:"metadata"`
 }
 
 type UID struct {
-	Id     string `firestore:"id"`
-	Device []byte `firestore:"device"`
-	PubKey []byte `firestore:"pubkey"`
-	Token  []byte `firestore:"token"`
+	//Id should be phone number.
+	Id     string `firestore:"id" json:"id"`
+	Device []byte `firestore:"device" json:"device"`
+	PubKey []byte `firestore:"pub_key" json:"pub_key"`
+	Token  []byte `firestore:"token" json:"token"`
+	Name   string `firestore:"name" json:"name"`
+	Email  string `firestore:"email" json:"email"`
 	//	SignedPreKey io.ReadWriter
 	//	PreKeyBundle []io.ReadWriter
 }
 
 type Metadata struct {
-	PaymentProviders []PaymentProvider `firestore:"paymentproviders"`
-	NumberPayments   uint64            `firestore:"numberpayments"`
+	PaymentProviders []PaymentProvider `firestore:"payment_providers" json:"payment_providers"`
+	NumberPayments   uint64            `firestore:"number_payments" json:"number_payments"`
 }
