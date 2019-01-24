@@ -7,24 +7,24 @@ package datastore
 import (
 	"errors"
 	"fmt"
-	"sort"
 	"sync"
 )
 
 // Ensure memoryDB conforms to the ProfileDatabase interface.
-var _ ProfileDatabase = &memoryDB{}
+var _ FirestoreDatabase = &memoryDB{}
 
 // memoryDB is a simple in-memory persistence layer for profiles.
 type memoryDB struct {
 	mutex    sync.Mutex
 	profiles map[string]*Profile // maps from profile ID to profile.
 	files    map[string]*Files
+	blocked  map[string][]string
 }
 
 func newMemoryDB() *memoryDB {
 	return &memoryDB{
 		profiles: make(map[string]*Profile),
-		files: make(map[string]*Files),
+		files:    make(map[string]*Files),
 	}
 }
 
@@ -96,18 +96,10 @@ func (db *memoryDB) ListFilesSharedBy(userID string) (*Files, error) {
 		return nil, errors.New("empty userID for files shared")
 	}
 
-	db.mutex.Lock()
-	defer db.mutex.Unlock()
+	//	db.mutex.Lock()
+	//	defer db.mutex.Unlock()
 
-	var files Files
-	for _, p := range db.files[userID] {
-		if p == userID {
-			books = append(books, b)
-		}
-	}
-
-	sort.Sort(booksByTitle(books))
-	return books, nil
+	return nil, nil
 }
 
 func (db *memoryDB) ListProfiles() ([]*Profile, error) {
@@ -118,4 +110,22 @@ func (db *memoryDB) ListProfiles() ([]*Profile, error) {
 		i++
 	}
 	return profiles, nil
+}
+
+func (db *memoryDB) IsBlocked(userId string) (bool, error) {
+	isBlocked := false
+	blocked := db.blocked[userId]
+	for i := 0; isBlocked || i < len(blocked); i++ {
+		isBlocked = blocked[i] == userId
+	}
+	return isBlocked, nil
+}
+
+func (db *memoryDB) RegenProfile(p *Profile) error {
+	db.mutex.Lock()
+	defer db.mutex.Unlock()
+
+	db.profiles[p.UserId.Id] = p
+
+	return nil
 }
