@@ -20,14 +20,22 @@ type MonetaryTransfer struct {
 	RecurrentId   int64  `firebase:"recurrent_id" json:"recurrent_id"`
 }
 
-func getMonetaryTransferFromDB(doc firestore.DocumentRef) (*MonetaryTransfer, error) {
+func getMonetaryTransferFromDB(
+	doc firestore.DocumentRef,
+) (*MonetaryTransfer, error) {
 	var mon MonetaryTransfer
 	docsnap, err := doc.Get(context.Background())
 	if err != nil {
-		return nil, fmt.Errorf("no monetary transfer present: %v", err)
+		return nil, fmt.Errorf(
+			"no monetary transfer present: %v",
+			err,
+		)
 	}
 	if err = docsnap.DataTo(&mon); err != nil {
-		return nil, fmt.Errorf("monetary transfer is not conformant: %v", err)
+		return nil, fmt.Errorf(
+			"monetary transfer is not conformant: %v",
+			err,
+		)
 	}
 	return &mon, nil
 }
@@ -41,14 +49,22 @@ type GroupTransfer struct {
 	Generated   []*firestore.DocumentRef `firebase:"generated" json:"generated"`
 }
 
-func getGroupTransferFromDB(doc firestore.DocumentRef) (*GroupTransfer, error) {
+func getGroupTransferFromDB(
+	doc firestore.DocumentRef,
+) (*GroupTransfer, error) {
 	var grp GroupTransfer
 	docsnap, err := doc.Get(context.Background())
 	if err != nil {
-		return nil, fmt.Errorf("no monetary transfer present: %v", err)
+		return nil, fmt.Errorf(
+			"no monetary transfer present: %v",
+			err,
+		)
 	}
 	if err = docsnap.DataTo(&grp); err != nil {
-		return nil, fmt.Errorf("monetary transfer is not conformant: %v", err)
+		return nil, fmt.Errorf(
+			"monetary transfer is not conformant: %v",
+			err,
+		)
 	}
 	return &grp, nil
 }
@@ -59,14 +75,22 @@ type RecurrentTransfer struct {
 	Concluded   bool  `firebase:"concluded" json:"concluded"`
 }
 
-func getRecurrentTransferFromDB(doc firestore.DocumentRef) (*RecurrentTransfer, error) {
+func getRecurrentTransferFromDB(
+	doc firestore.DocumentRef,
+) (*RecurrentTransfer, error) {
 	var rec RecurrentTransfer
 	docsnap, err := doc.Get(context.Background())
 	if err != nil {
-		return nil, fmt.Errorf("no monetary transfer present: %v", err)
+		return nil, fmt.Errorf(
+			"no monetary transfer present: %v",
+			err,
+		)
 	}
 	if err = docsnap.DataTo(&rec); err != nil {
-		return nil, fmt.Errorf("monetary transfer is not conformant: %v", err)
+		return nil, fmt.Errorf(
+			"monetary transfer is not conformant: %v",
+			err,
+		)
 	}
 	return &rec, nil
 }

@@ -15,7 +15,10 @@ var (
 
 func init() {
 	var err error
-	app, err = firebase.NewApp(context.Background(), nil)
+	app, err = firebase.NewApp(
+		context.Background(),
+		nil,
+	)
 	if err != nil {
 		log.Fatal(err)
 	}

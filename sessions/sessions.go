@@ -14,7 +14,9 @@ func init() {
 	// [START sessions]
 	// Configure storage method for session-wide information.
 	// Update "something-very-secret" with a hard to guess string or byte sequence.
-	cookieStore := sessions.NewCookieStore([]byte(cookie_secret))
+	cookieStore := sessions.NewCookieStore(
+		[]byte(cookie_secret),
+	)
 	cookieStore.Options = &sessions.Options{
 		HttpOnly: true,
 	}
