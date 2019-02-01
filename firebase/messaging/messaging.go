@@ -109,3 +109,29 @@ func generateRequestAcceptance(
 	}
 }
 
+func generateReminder(
+	token string,
+	amountUnites int64,
+	amountCents int32,
+	currency string,
+	deliveredFrom string,
+) *messaging.Message {
+	return &messaging.Message{
+		Android: &messaging.AndroidConfig{
+			Priority: "normal",
+			Notification: &messaging.AndroidNotification{
+				Title: "Remind Debtor of a Debt Payment Request",
+				Body: fmt.Sprintf(
+					"You have %v.%v %v to pay to %v",
+					amountUnits,
+					amountCents,
+					currency
+					deliveredFrom,
+				),
+				Color: "#161119",
+			},
+			RestrictedPackageName: "com.giveme.pei.givemeapp",
+		},
+		Token: token,
+	}
+}
