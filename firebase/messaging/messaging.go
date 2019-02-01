@@ -11,6 +11,7 @@ func generateRequestNotification(
 	token string,
 	amountUnits int64,
 	amountCents int32,
+	currency string,
 	deliveredFrom string,
 ) *messaging.Message {
 	return &messaging.Message{
@@ -19,9 +20,10 @@ func generateRequestNotification(
 			Notification: &messaging.AndroidNotification{
 				Title: "Debt Notification",
 				Body: fmt.Sprintf(
-					"You owe %v.%v to %v",
+					"You owe %v.%v %v to %v",
 					amountUnits,
 					amountCents,
+					currency,
 					deliveredFrom,
 				),
 				Color: "#161119",
