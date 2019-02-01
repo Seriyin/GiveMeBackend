@@ -54,3 +54,31 @@ func generateNewUserRequest(
 		Token: token,
 	}
 }
+
+func generateRequestRefusal(
+	token string,
+	amountUnits int64,
+	amountCents int32,
+	currency string,
+	deliveredFrom string,
+) *messaging.Message {
+	return &messaging.Message{
+		Android: &messaging.AndroidConfig{
+			Priority: "normal",
+			Notification: &messaging.AndroidNotification{
+				Title: "Debtor Refused Debt Payment Request",
+				Body: fmt.Sprintf(
+					"%v Refused the Debt of %v.%v %v",
+					deliveredFrom,
+					amountUnits,
+					amountCents,
+					currency,
+				),
+				Color: "#161119",
+			},
+			RestrictedPackageName: "com.giveme.pei.givemeapp",
+		},
+		Token: token,
+	}
+}
+
