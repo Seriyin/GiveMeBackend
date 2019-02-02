@@ -5,9 +5,7 @@ import (
 	"fmt"
 )
 
-var ()
-
-func generateRequestNotification(
+func GenerateRequestNotification(
 	token string,
 	amountUnits int64,
 	amountCents int32,
@@ -20,7 +18,7 @@ func generateRequestNotification(
 			Notification: &messaging.AndroidNotification{
 				Title: "Debt Notification",
 				Body: fmt.Sprintf(
-					"You owe %v.%v %v to %v",
+					"You were tagged to pay %v.%v %v to %v",
 					amountUnits,
 					amountCents,
 					currency,
@@ -34,7 +32,7 @@ func generateRequestNotification(
 	}
 }
 
-func generateNewUserRequest(
+func GenerateNewUserRequest(
 	toCheckRemind string,
 	token string,
 	toRemind string,
@@ -45,7 +43,7 @@ func generateNewUserRequest(
 			Notification: &messaging.AndroidNotification{
 				Title: "User Joined Notification",
 				Body: fmt.Sprintf(
-					"%v, A user who owes you has joined GiveMe. Remind %v them of their debt?",
+					"%v, A user who owes you has joined GiveMe. Remind %v of their debt?",
 					toCheckRemind,
 					toRemind,
 				),
@@ -57,7 +55,7 @@ func generateNewUserRequest(
 	}
 }
 
-func generateRequestRefusal(
+func GenerateRequestRefusal(
 	token string,
 	amountUnits int64,
 	amountCents int32,
@@ -70,7 +68,7 @@ func generateRequestRefusal(
 			Notification: &messaging.AndroidNotification{
 				Title: "Debtor Refused Debt Payment Request",
 				Body: fmt.Sprintf(
-					"%v Refused the Debt of %v.%v %v",
+					"%v refused the debt of %v.%v %v",
 					deliveredFrom,
 					amountUnits,
 					amountCents,
@@ -84,7 +82,7 @@ func generateRequestRefusal(
 	}
 }
 
-func generateRequestAcceptance(
+func GenerateRequestAcceptance(
 	token string,
 	amountUnits int64,
 	amountCents int32,
@@ -97,7 +95,7 @@ func generateRequestAcceptance(
 			Notification: &messaging.AndroidNotification{
 				Title: "Debtor Accepted Debt Payment Request",
 				Body: fmt.Sprintf(
-					"%v Accepted the Debt of %v.%v %v",
+					"%v accepted the debt of %v.%v %v",
 					deliveredFrom,
 					amountUnits,
 					amountCents,
@@ -111,9 +109,9 @@ func generateRequestAcceptance(
 	}
 }
 
-func generateReminder(
+func GenerateReminder(
 	token string,
-	amountUnites int64,
+	amountUnits int64,
 	amountCents int32,
 	currency string,
 	deliveredFrom string,
@@ -122,13 +120,38 @@ func generateReminder(
 		Android: &messaging.AndroidConfig{
 			Priority: "normal",
 			Notification: &messaging.AndroidNotification{
-				Title: "Remind Debtor of a Debt Payment Request",
+				Title: "Debt Payment Reminder",
 				Body: fmt.Sprintf(
-					"You have %v.%v %v to pay to %v",
+					"%v wants to remind you to pay %v.%v %v",
+					deliveredFrom,
 					amountUnits,
 					amountCents,
-					currency
-					deliveredFrom,
+					currency,
+				),
+				Color: "#161119",
+			},
+			RestrictedPackageName: "com.giveme.pei.givemeapp",
+		},
+		Token: token,
+	}
+}
+
+func GenerateScheduled(
+	token string,
+	amountUnits int64,
+	amountCents int32,
+	currency string,
+) *messaging.Message {
+	return &messaging.Message{
+		Android: &messaging.AndroidConfig{
+			Priority: "normal",
+			Notification: &messaging.AndroidNotification{
+				Title: "Scheduled Debt Payment",
+				Body: fmt.Sprintf(
+					"A debt was scheduled of %v.%v%v",
+					amountUnits,
+					amountCents,
+					currency,
 				),
 				Color: "#161119",
 			},
