@@ -10,8 +10,8 @@ import (
 	"sync"
 )
 
-// Ensure memoryDB conforms to the ProfileDatabase interface.
-var _ FirestoreDatabase = &memoryDB{}
+// Ensure memoryDB conforms to the GiveMeDatabase interface.
+var _ GiveMeDatabase = &memoryDB{}
 
 // memoryDB is a simple in-memory persistence layer for profiles.
 type memoryDB struct {
@@ -112,15 +112,6 @@ func (db *memoryDB) ListProfiles() ([]*Profile, error) {
 	return profiles, nil
 }
 
-func (db *memoryDB) IsBlocked(userId string) (bool, error) {
-	isBlocked := false
-	blocked := db.blocked[userId]
-	for i := 0; isBlocked || i < len(blocked); i++ {
-		isBlocked = blocked[i] == userId
-	}
-	return isBlocked, nil
-}
-
 func (db *memoryDB) RegenProfile(p *Profile) error {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
@@ -128,4 +119,60 @@ func (db *memoryDB) RegenProfile(p *Profile) error {
 	db.profiles[p.UserId.Id] = p
 
 	return nil
+}
+
+func (db *memoryDB) IsBlocked(
+	userId string,
+	blocked string,
+) (bool, error) {
+	isBlocked := false
+	blockedP := db.blocked[userId]
+	for i := 0; isBlocked || i < len(blockedP); i++ {
+		isBlocked = blockedP[i] == blocked
+	}
+	return isBlocked, nil
+}
+
+func (db *memoryDB) GetMonetaryTransfer(
+	userId string,
+	snowflake string,
+) (*MonetaryTransfer, error) {
+	panic("implement me")
+}
+
+func (db *memoryDB) GetMonetaryTransfersDate(
+	userId string,
+	dateBefore string,
+) ([]*MonetaryTransfer, error) {
+	panic("implement me")
+}
+
+func (db *memoryDB) GetMonetaryTransfersInterval(
+	userId string,
+	dateAfter string,
+	dateBefore string,
+) ([]*MonetaryTransfer, error) {
+	panic("implement me")
+}
+
+func (db *memoryDB) GetMonetaryTransfersFromGroup(
+	userId string,
+	groupId int64,
+) ([]*MonetaryTransfer, error) {
+	panic("implement me")
+}
+
+func (db *memoryDB) GetMonetaryTransfersRecurrent(
+	userId string,
+	recurrentId int64,
+) ([]*MonetaryTransfer, error) {
+	panic("implement me")
+}
+
+func (db *memoryDB) SetMonetaryTransfer(
+	userId string,
+	transfer *MonetaryTransfer,
+	path string,
+) error {
+	panic("implement me")
 }

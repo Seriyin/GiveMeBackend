@@ -13,17 +13,17 @@ type firestoreDB struct {
 	client *firestore.Client
 }
 
-// Ensure firestoreDB conforms to the FirestoreDatabase interface.
+// Ensure firestoreDB conforms to the GiveMeDatabase interface.
 var (
-	_ datastore.FirestoreDatabase = &firestoreDB{}
+	_ datastore.GiveMeDatabase = &firestoreDB{}
 )
 
-// NewFirestoreDB creates a new FirestoreDatabase backed by Cloud Firestore.
+// NewFirestoreDB creates a new GiveMeDatabase backed by Cloud Firestore.
 // See the firestore and google packages for details on creating a suitable Client:
 // https://godoc.org/cloud.google.com/go/firestore
 func NewFirestoreDB(
 	client *firestore.Client,
-) (datastore.FirestoreDatabase, error) {
+) (datastore.GiveMeDatabase, error) {
 	ctx := context.Background()
 	// Verify that we can communicate and authenticate with the datastore service.
 	err := client.RunTransaction(
@@ -136,35 +136,6 @@ func (db *firestoreDB) ListProfiles() ([]*datastore.Profile, error) {
 	return nil, nil
 }
 
-func (db *firestoreDB) IsBlocked(
-	userId string,
-) (bool, error) {
-	ctx := context.Background()
-	doc := db.client.Collection(
-		"blocked",
-	).Doc(userId)
-	docSnap, err := doc.Get(ctx)
-	if err != nil {
-		return false, fmt.Errorf(
-			"datastoredb: could not find Blocked: %v",
-			err,
-		)
-	}
-	var blocked []string
-	err = docSnap.DataTo(&blocked)
-	if err != nil {
-		return false, fmt.Errorf(
-			"datastoredb: could not populate blocked array: %v",
-			err,
-		)
-	}
-	isBlocked := false
-	for i := 0; isBlocked || i < len(blocked); i++ {
-		isBlocked = blocked[i] == userId
-	}
-	return isBlocked, nil
-}
-
 func (db *firestoreDB) RegenProfile(p *datastore.Profile) error {
 	ctx := context.Background()
 	doc := db.client.Collection(
@@ -178,6 +149,80 @@ func (db *firestoreDB) RegenProfile(p *datastore.Profile) error {
 		)
 	}
 	return nil
+}
+
+func (db *firestoreDB) IsBlocked(
+	userId string,
+	blocked string,
+) (bool, error) {
+	ctx := context.Background()
+	doc := db.client.Collection(
+		"blocked",
+	).Doc(userId)
+	docSnap, err := doc.Get(ctx)
+	if err != nil {
+		return false, fmt.Errorf(
+			"datastoredb: could not find Blocked: %v",
+			err,
+		)
+	}
+	var blockedP []string
+	err = docSnap.DataTo(&blockedP)
+	if err != nil {
+		return false, fmt.Errorf(
+			"datastoredb: could not populate blocked array: %v",
+			err,
+		)
+	}
+	isBlocked := false
+	for i := 0; isBlocked || i < len(blockedP); i++ {
+		isBlocked = blockedP[i] == blocked
+	}
+	return isBlocked, nil
+}
+
+func (db *firestoreDB) GetMonetaryTransfer(
+	userId string,
+	snowflake string,
+) (*datastore.MonetaryTransfer, error) {
+	panic("implement me")
+}
+
+func (db *firestoreDB) GetMonetaryTransfersDate(
+	userId string,
+	dateBefore string,
+) ([]*datastore.MonetaryTransfer, error) {
+	panic("implement me")
+}
+
+func (db *firestoreDB) GetMonetaryTransfersInterval(
+	userId string,
+	dateAfter string,
+	dateBefore string,
+) ([]*datastore.MonetaryTransfer, error) {
+	panic("implement me")
+}
+
+func (db *firestoreDB) GetMonetaryTransfersFromGroup(
+	userId string,
+	groupId int64,
+) ([]*datastore.MonetaryTransfer, error) {
+	panic("implement me")
+}
+
+func (db *firestoreDB) GetMonetaryTransfersRecurrent(
+	userId string,
+	recurrentId int64,
+) ([]*datastore.MonetaryTransfer, error) {
+	panic("implement me")
+}
+
+func (db *firestoreDB) SetMonetaryTransfer(
+	userId string,
+	transfer *datastore.MonetaryTransfer,
+	path string,
+) error {
+	panic("implement me")
 }
 
 // Event is the payload of a Firestore event.

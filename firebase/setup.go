@@ -24,7 +24,7 @@ func init() {
 	}
 }
 
-func GetDB() datastore.FirestoreDatabase {
+func GetDB() datastore.GiveMeDatabase {
 	db, err := app.Firestore(context.Background())
 	if err != nil {
 		log.Fatal(err)

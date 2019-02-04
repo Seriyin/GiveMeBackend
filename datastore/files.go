@@ -23,7 +23,3 @@ type memoryFiles struct {
 	metadata io.ReadWriter
 	bytes    io.ReadWriter
 }
-
-type storedFiles struct {
-	files map[int64]ObjectData
-}
