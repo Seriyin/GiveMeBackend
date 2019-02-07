@@ -9,9 +9,11 @@ import (
 	"github.com/Seriyin/GibMe-backend/config/datastore"
 	"github.com/Seriyin/GibMe-backend/config/firebase"
 	"github.com/Seriyin/GibMe-backend/config/firebase/firestore"
+	"github.com/Seriyin/GibMe-backend/config/firebase/messaging"
 )
 
 var db = firebase.GetDB()
+var mesClient = firebase.GetMessaging()
 
 func Request(
 	ctx context.Context,
@@ -31,5 +33,10 @@ func Request(
 	if err != nil {
 		return fmt.Errorf("Set: %v", err)
 	}
+
+	//generate notification message
+	token := "" //IMPLEMENT ME
+	message := messaging.GenerateRequestNotification("", monetaryT.AmountUnit, monetaryT.AmountCents, monetaryT.Currency, monetaryT.From)
+	mesClient.send(ctx, message)
 	return nil
 }
