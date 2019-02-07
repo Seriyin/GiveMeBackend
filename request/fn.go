@@ -14,17 +14,17 @@ func Request(
 	ctx context.Context,
 	e firestore.Event,
 ) {
-	var moneteryT MonetaryTransfer //Monetary Structure object
-	err := json.Unmarshal(e.Value.Fields, &moneteryT) //Json obejct to Monetary Structure
-	debtor := moneteryT.To //Debtor present in the To value on the Monetary Stuct
+	var monetaryT MonetaryTransfer //Monetary Structure object
+	err := json.Unmarshal(e.Value.Fields, &monetaryT) //Json object to Monetary Structure
+	debtor := monetaryT.To //Debtor present in the To value on the Monetary Struct
 
 	/*
-	*Use the debotr id to split the path
-	*so it gets the path next to the credor ID 
+	*Use the debtor id to split the path
+	*so it gets the path next to the creditor ID 
 	*to be replaced by the debtor ID, so it inserts on the correct collection
 	*/
-	splitvalue := "/"+moneteryT.From+"/"
-	path := strings.Split(e.Value.Name, splivalue)[1]
+	splitvalue := "/"+monetaryT.From+"/"
+	path := strings.Split(e.Value.Name, splitvalue)[1]
 
 	db.setMonetaryTransfer(debtor, newmonetaryT, path)
 }
