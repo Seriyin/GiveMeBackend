@@ -3,6 +3,7 @@ package firestore
 import (
 	"cloud.google.com/go/firestore"
 	"context"
+	"encoding/json"
 	"fmt"
 	"google.golang.org/api/iterator"
 	"log"
@@ -299,8 +300,40 @@ func (db *firestoreDB) SetMonetaryTransfer(
 	userId string,
 	transfer *datastore.MonetaryTransfer,
 	path string,
+) (string, error) {
+	ctx := context.Background()
+	pathT := "monetary_transfer/" + userId + "/" + path
+	doc, wr, err := db.client.Collection(
+		pathT,
+	).Add(ctx, transfer)
+	if err != nil {
+		return "", fmt.Errorf(
+			"datastoredb: failed to add monetary transfer in %v: %v %v",
+			pathT,
+			wr,
+			err,
+		)
+	}
+	return doc.ID, err
+}
+
+func (db *firestoreDB) SetMonetaryTransfers(
+	userId string,
+	transfers []*datastore.MonetaryTransfer,
+	path string,
 ) error {
-	panic("implement me")
+	ctx := context.Background()
+	pathT := "monetary_transfer/" + userId + "/" + path
+	batch := db.client.Batch()
+	cl := db.client.Collection(
+		pathT,
+	)
+	for _, transfer := range transfers {
+		doc := cl.NewDoc()
+		batch.Set(doc, transfer)
+	}
+	_, err := batch.Commit(ctx)
+	return err
 }
 
 // Event is the payload of a Firestore event.
@@ -316,9 +349,8 @@ type Event struct {
 type Value struct {
 	CreateTime time.Time `json:"createTime"`
 	// Fields is the data for this value. The type depends on the format of your
-	// database. Log the interface{} value and inspect the result to see a JSON
-	// representation of your database fields.
-	Fields     interface{} `json:"fields"`
-	Name       string      `json:"name"`
-	UpdateTime time.Time   `json:"updateTime"`
+	// database.
+	Fields     json.RawMessage `json:"fields"`
+	Name       string          `json:"name"`
+	UpdateTime time.Time       `json:"updateTime"`
 }

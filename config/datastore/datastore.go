@@ -75,5 +75,11 @@ type GiveMeDatabase interface {
 		userId string,
 		transfer *MonetaryTransfer,
 		path string,
+	) (string, error)
+
+	SetMonetaryTransfers(
+		userId string,
+		transfer []*MonetaryTransfer,
+		path string,
 	) error
 }

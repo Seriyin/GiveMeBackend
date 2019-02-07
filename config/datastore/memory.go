@@ -174,6 +174,14 @@ func (db *memoryDB) SetMonetaryTransfer(
 	userId string,
 	transfer *MonetaryTransfer,
 	path string,
+) (string, error) {
+	panic("implement me")
+}
+
+func (db *memoryDB) SetMonetaryTransfers(
+	userId string,
+	transfer []*MonetaryTransfer,
+	path string,
 ) error {
 	panic("implement me")
 }
