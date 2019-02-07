@@ -134,8 +134,17 @@ func (db *memoryDB) IsBlocked(
 	return isBlocked, nil
 }
 
-func (db *memoryDB) GetMonetaryTransfer(
+func (db *memoryDB) GetMonetaryTransferWithDate(
 	userId string,
+	date time.Time,
+	snowflake string,
+) (*MonetaryTransfer, error) {
+	panic("implement me")
+}
+
+func (db *memoryDB) GetMonetaryTransferWithDateString(
+	userId string,
+	date string,
 	snowflake string,
 ) (*MonetaryTransfer, error) {
 	panic("implement me")

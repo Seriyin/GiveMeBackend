@@ -41,8 +41,16 @@ type GiveMeDatabase interface {
 	// MonetaryTransfer from db.
 
 	// GetMonetaryTransfer by unique id (snowflake).
-	GetMonetaryTransfer(
+	GetMonetaryTransferWithDate(
 		userId string,
+		date time.Time,
+		snowflake string,
+	) (*MonetaryTransfer, error)
+
+	// GetMonetaryTransfer by unique id (snowflake).
+	GetMonetaryTransferWithDateString(
+		userId string,
+		date string,
 		snowflake string,
 	) (*MonetaryTransfer, error)
 

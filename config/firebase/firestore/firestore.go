@@ -184,13 +184,42 @@ func (db *firestoreDB) IsBlocked(
 	return isBlocked, nil
 }
 
-func (db *firestoreDB) GetMonetaryTransfer(
+func (db *firestoreDB) GetMonetaryTransferWithDate(
 	userId string,
+	date time.Time,
+	snowflake string,
+) (*datastore.MonetaryTransfer, error) {
+	ctx := context.Background()
+	dt := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, time.UTC)
+	doc := db.client.Collection(
+		"monetary_transfer/" + userId + "/" + dt.Format("Jan 2006") + "/",
+	).Doc(snowflake)
+	docSnap, err := doc.Get(ctx)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"datastoredb: could not get monetary_transfer: %v",
+			err,
+		)
+	}
+	var mon datastore.MonetaryTransfer
+	err = docSnap.DataTo(&mon)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"datastoredb: could not convert to monetary_transfer: %v",
+			err,
+		)
+	}
+	return &mon, nil
+}
+
+func (db *firestoreDB) GetMonetaryTransferWithDateString(
+	userId string,
+	date string,
 	snowflake string,
 ) (*datastore.MonetaryTransfer, error) {
 	ctx := context.Background()
 	doc := db.client.Collection(
-		"monetary_transfer/" + userId,
+		"monetary_transfer/" + userId + "/" + date + "/",
 	).Doc(snowflake)
 	docSnap, err := doc.Get(ctx)
 	if err != nil {
@@ -257,7 +286,7 @@ func collectFromDate(
 	db *firestoreDB,
 ) {
 	ctx := context.Background()
-	path := pathRoot + "/" + dt.Format("Mon, 02 Jan 2006")
+	path := pathRoot + "/" + dt.Format("Jan 2006") + "/"
 	docIter := db.client.Collection(path).Documents(ctx)
 	doc, err := docIter.Next()
 	var mon datastore.MonetaryTransfer
