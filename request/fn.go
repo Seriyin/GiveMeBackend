@@ -3,7 +3,7 @@ package request
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"log"
 	"strings"
 
 	"github.com/Seriyin/GibMe-backend/config/datastore"
@@ -31,12 +31,23 @@ func Request(
 
 	_, err = db.SetMonetaryTransfer(debtor, &monetaryT, path)
 	if err != nil {
-		return fmt.Errorf("Set: %v", err)
+		return err
 	}
 
 	//generate notification message
 	token := "" //IMPLEMENT ME
-	message := messaging.GenerateRequestNotification("", monetaryT.AmountUnit, monetaryT.AmountCents, monetaryT.Currency, monetaryT.From)
-	mesClient.send(ctx, message)
-	return nil
+	message := messaging.GenerateRequestNotification(
+		token,
+		monetaryT.AmountUnit,
+		monetaryT.AmountCents,
+		monetaryT.Currency,
+		monetaryT.From,
+	)
+
+	var str string
+	str, err = mesClient.Send(ctx, message)
+	if err != nil {
+		log.Print(str)
+	}
+	return err
 }
