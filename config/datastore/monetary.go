@@ -13,7 +13,7 @@ type MonetaryTransfer struct {
 	Desc          string    `firebase:"desc" json:"desc"`
 	Date          time.Time `firebase:"date" json:"date"`
 	AmountUnit    int64     `firebase:"amount_unit" json:"amount_unit"`
-	AmountCents   byte      `firebase:"amount_cents" json:"amount_cents"`
+	AmountCents   int64     `firebase:"amount_cents" json:"amount_cents"`
 	Currency      string    `firebase:"currency" json:"currency"`
 	ConfirmedFrom bool      `firebase:"confirmed_from" json:"confirmed_from"`
 	ConfirmedTo   bool      `firebase:"confirmed_to" json:"confirmed_to"`
@@ -45,7 +45,7 @@ type GroupTransfer struct {
 	GroupId     int64                    `firebase:"group_id" json:"group_id"`
 	Included    bool                     `firebase:"included" json:"included"`
 	AmountUnit  int64                    `firebase:"amount_unit" json:"amount_unit"`
-	AmountCents byte                     `firebase:"amount_cents" json:"amount_cents"`
+	AmountCents int64                    `firebase:"amount_cents" json:"amount_cents"`
 	Tos         []string                 `firebase:"tos" json:"tos"`
 	Generated   []*firestore.DocumentRef `firebase:"generated" json:"generated"`
 }
