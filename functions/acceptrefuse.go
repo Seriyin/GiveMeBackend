@@ -6,6 +6,6 @@ import {
 
 var db = firebase.GetDB()
 
-func Acceptance(
+func AcceptanceOrRefusal(
 	
 )
