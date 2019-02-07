@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"time"
 )
 
 // Ensure memoryDB conforms to the GiveMeDatabase interface.
@@ -142,15 +143,15 @@ func (db *memoryDB) GetMonetaryTransfer(
 
 func (db *memoryDB) GetMonetaryTransfersDate(
 	userId string,
-	dateBefore string,
+	dateBefore time.Time,
 ) ([]*MonetaryTransfer, error) {
 	panic("implement me")
 }
 
 func (db *memoryDB) GetMonetaryTransfersInterval(
 	userId string,
-	dateAfter string,
-	dateBefore string,
+	dateAfter time.Time,
+	dateBefore time.Time,
 ) ([]*MonetaryTransfer, error) {
 	panic("implement me")
 }

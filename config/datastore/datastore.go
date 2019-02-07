@@ -1,5 +1,7 @@
 package datastore
 
+import "time"
+
 // Interface for defining operations over underlying DB
 // needed for the entire service.
 type GiveMeDatabase interface {
@@ -47,14 +49,14 @@ type GiveMeDatabase interface {
 	// GetMonetaryTransfers by current date until dateBefore.
 	GetMonetaryTransfersDate(
 		userId string,
-		dateBefore string,
+		dateBefore time.Time,
 	) ([]*MonetaryTransfer, error)
 
 	// GetMonetaryTransfers between two dates.
 	GetMonetaryTransfersInterval(
 		userId string,
-		dateAfter string,
-		dateBefore string,
+		dateAfter time.Time,
+		dateBefore time.Time,
 	) ([]*MonetaryTransfer, error)
 
 	// GetMonetaryTransfers for a group transfer.

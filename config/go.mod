@@ -1,4 +1,4 @@
-module github.com/Seriyin/GibMe-backend
+module github.com/Seriyin/GibMe-backend/config
 
 require (
 	cloud.google.com/go v0.34.0

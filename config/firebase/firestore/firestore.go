@@ -4,9 +4,11 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"fmt"
+	"google.golang.org/api/iterator"
+	"log"
 	"time"
 
-	"github.com/Seriyin/GibMe-backend/datastore"
+	"github.com/Seriyin/GibMe-backend/config/datastore"
 )
 
 type firestoreDB struct {
@@ -185,20 +187,96 @@ func (db *firestoreDB) GetMonetaryTransfer(
 	userId string,
 	snowflake string,
 ) (*datastore.MonetaryTransfer, error) {
-	panic("implement me")
+	ctx := context.Background()
+	doc := db.client.Collection(
+		"monetary_transfer/" + userId,
+	).Doc(snowflake)
+	docSnap, err := doc.Get(ctx)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"datastoredb: could not get monetary_transfer: %v",
+			err,
+		)
+	}
+	var mon datastore.MonetaryTransfer
+	err = docSnap.DataTo(&mon)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"datastoredb: could not convert to monetary_transfer: %v",
+			err,
+		)
+	}
+	return &mon, nil
 }
 
 func (db *firestoreDB) GetMonetaryTransfersDate(
 	userId string,
-	dateBefore string,
+	dateBefore time.Time,
 ) ([]*datastore.MonetaryTransfer, error) {
-	panic("implement me")
+	pathRoot := "monetary_transfer/" + userId
+
+	now := time.Now()
+	dt := time.Date(
+		now.Year(),
+		now.Month(),
+		now.Day(),
+		0,
+		0,
+		0,
+		0,
+		time.UTC,
+	)
+	dtBefore := time.Date(
+		dateBefore.Year(),
+		dateBefore.Month(),
+		dateBefore.Day(),
+		0,
+		0,
+		0,
+		0,
+		time.UTC,
+	)
+	return nil, fmt.Errorf(
+		"datastoredb: not implemented yet %v %v %v",
+		pathRoot,
+		dt,
+		dtBefore,
+	)
+	/*
+		for ; dt.After(dtBefore); dt.AddDate(0, 0, -1) {
+			go collectFromDate(pathRoot, dt, db)
+		}
+		return &mon, nil
+	*/
+}
+
+func collectFromDate(
+	pathRoot string,
+	dt time.Time,
+	db *firestoreDB,
+) {
+	ctx := context.Background()
+	path := pathRoot + "/" + dt.Format("Mon, 02 Jan 2006")
+	docIter := db.client.Collection(path).Documents(ctx)
+	doc, err := docIter.Next()
+	var mon datastore.MonetaryTransfer
+	for ; err != iterator.Done; doc, err = docIter.Next() {
+		err = doc.DataTo(&mon)
+		if err != nil {
+			log.Print(
+				fmt.Errorf(
+					"datastoredb: could not convert to monetary_transfer: %v",
+					err,
+				),
+			)
+		}
+	}
 }
 
 func (db *firestoreDB) GetMonetaryTransfersInterval(
 	userId string,
-	dateAfter string,
-	dateBefore string,
+	dateAfter time.Time,
+	dateBefore time.Time,
 ) ([]*datastore.MonetaryTransfer, error) {
 	panic("implement me")
 }

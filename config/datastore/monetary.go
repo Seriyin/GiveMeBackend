@@ -4,20 +4,21 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"fmt"
+	"time"
 )
 
 type MonetaryTransfer struct {
-	From          string `firebase:"from" json:"from"`
-	To            string `firebase:"to" json:"to"`
-	Desc          string `firebase:"desc" json:"desc"`
-	Date          string `firebase:"date" json:"date"`
-	AmountUnit    int64  `firebase:"amount_unit" json:"amount_unit"`
-	AmountCents   byte   `firebase:"amount_cents" json:"amount_cents"`
-	Currency      string `firebase:"currency" json:"currency"`
-	ConfirmedFrom bool   `firebase:"confirmed_from" json:"confirmed_from"`
-	ConfirmedTo   bool   `firebase:"confirmed_to" json:"confirmed_to"`
-	GroupId       int64  `firebase:"group_id" json:"group_id"`
-	RecurrentId   int64  `firebase:"recurrent_id" json:"recurrent_id"`
+	From          string    `firebase:"from" json:"from"`
+	To            string    `firebase:"to" json:"to"`
+	Desc          string    `firebase:"desc" json:"desc"`
+	Date          time.Time `firebase:"date" json:"date"`
+	AmountUnit    int64     `firebase:"amount_unit" json:"amount_unit"`
+	AmountCents   byte      `firebase:"amount_cents" json:"amount_cents"`
+	Currency      string    `firebase:"currency" json:"currency"`
+	ConfirmedFrom bool      `firebase:"confirmed_from" json:"confirmed_from"`
+	ConfirmedTo   bool      `firebase:"confirmed_to" json:"confirmed_to"`
+	GroupId       int64     `firebase:"group_id" json:"group_id"`
+	RecurrentId   int64     `firebase:"recurrent_id" json:"recurrent_id"`
 }
 
 func getMonetaryTransferFromDB(
