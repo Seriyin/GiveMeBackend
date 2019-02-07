@@ -8,7 +8,7 @@ import (
 func GenerateRequestNotification(
 	token string,
 	amountUnits int64,
-	amountCents int32,
+	amountCents int64,
 	currency string,
 	deliveredFrom string,
 ) *messaging.Message {
@@ -58,7 +58,7 @@ func GenerateNewUserRequest(
 func GenerateRequestRefusal(
 	token string,
 	amountUnits int64,
-	amountCents int32,
+	amountCents int64,
 	currency string,
 	deliveredFrom string,
 ) *messaging.Message {
@@ -85,7 +85,7 @@ func GenerateRequestRefusal(
 func GenerateRequestAcceptance(
 	token string,
 	amountUnits int64,
-	amountCents int32,
+	amountCents int64,
 	currency string,
 	deliveredFrom string,
 ) *messaging.Message {
@@ -112,7 +112,7 @@ func GenerateRequestAcceptance(
 func GenerateReminder(
 	token string,
 	amountUnits int64,
-	amountCents int32,
+	amountCents int64,
 	currency string,
 	deliveredFrom string,
 ) *messaging.Message {
@@ -139,7 +139,7 @@ func GenerateReminder(
 func GenerateScheduled(
 	token string,
 	amountUnits int64,
-	amountCents int32,
+	amountCents int64,
 	currency string,
 ) *messaging.Message {
 	return &messaging.Message{
