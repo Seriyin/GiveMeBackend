@@ -43,8 +43,21 @@ func Division(
 		newAmountUnit = strconv.ParseInt(sp[0], 10, 64)
 		newAmountCents = strconv.ParseInt(sp[1], 10, 64)
 	}
-	var monetaryTs []*datastore.MonetaryTransfer 
+	monetaryTs := make([]*datastore.MonetaryTransfer, len(groupT.Tos)) 
 	for _, to := range groupT.Tos {
-		
+		m := datastore.MonetaryTransfer{
+			From: "IMPLEMENTE ME",
+			To: to,
+			Desc: ,
+			Date: ,
+			AmountUnit: ,
+			AmountCents: ,
+			Currency: ,
+			ConfirmedFrom: ,
+			ConfirmedTo: ,
+			GroupId: ,
+			RecurrentId: ,
+		}
+		monetaryTs = append(monetaryTs, m)
 	} 
 }
