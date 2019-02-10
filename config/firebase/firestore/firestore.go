@@ -57,10 +57,10 @@ func (db *firestoreDB) Close() error {
 
 // GetProfile retrieves a profile by its ID.
 func (db *firestoreDB) GetProfile(
+	ctx context.Context,
 	userId string,
 ) (*datastore.Profile, error) {
-	ctx := context.Background()
-	doc := db.client.Collection("profiles").Doc(userId)
+	doc := db.client.Collection("Profiles").Doc(userId)
 	profile := &datastore.Profile{}
 	docSnap, err := doc.Get(ctx)
 	if err != nil {
@@ -78,9 +78,56 @@ func (db *firestoreDB) GetProfile(
 	return profile, nil
 }
 
+// GetProfileByPhoneNumber retrieves a profile by its associated phone number.
+func (db *firestoreDB) GetProfileByPhoneNumber(
+	ctx context.Context,
+	phoneNumber string,
+) (string, *datastore.Profile, error) {
+	docs := db.client.Collection("Profiles").Where("id", "==", phoneNumber).Documents(ctx)
+	profile := &datastore.Profile{}
+	defer docs.Stop()
+	docSnap, err := docs.Next()
+	if err != nil {
+		return "", nil, fmt.Errorf(
+			"datastoredb: could not get Profile: %v",
+			err,
+		)
+	}
+	if err := docSnap.DataTo(profile); err != nil {
+		return "", nil, fmt.Errorf(
+			"datastoredb: could not populate Profile: %v",
+			err,
+		)
+	}
+	return docSnap.Ref.ID, profile, nil
+}
+
+// GetProfileIdByPhoneNumber retrieves a profile's Id by its associated phone number.
+func (db *firestoreDB) GetProfileIdByPhoneNumber(
+	ctx context.Context,
+	phoneNumber string,
+) (string, error) {
+	docs := db.client.Collection("Profiles").Where(
+		"id",
+		"==",
+		phoneNumber,
+	).Documents(ctx)
+	defer docs.Stop()
+	docSnap, err := docs.Next()
+	if err != nil {
+		return "", fmt.Errorf(
+			"datastoredb: could not get Profile: %v",
+			err,
+		)
+	}
+	return docSnap.Ref.ID, nil
+}
+
 // AddProfile saves a given profile, assigning it a new ID.
-func (db *firestoreDB) AddProfile(p *datastore.Profile) (string, error) {
-	ctx := context.Background()
+func (db *firestoreDB) AddProfile(
+	ctx context.Context,
+	p *datastore.Profile,
+) (string, error) {
 	doc := db.client.Collection(
 		"profiles",
 	).Doc(p.UserId.Id)
@@ -95,8 +142,10 @@ func (db *firestoreDB) AddProfile(p *datastore.Profile) (string, error) {
 }
 
 // DeleteProfile removes a given profile by its ID.
-func (db *firestoreDB) DeleteProfile(userId string) error {
-	ctx := context.Background()
+func (db *firestoreDB) DeleteProfile(
+	ctx context.Context,
+	userId string,
+) error {
 	doc := db.client.Collection(
 		"profiles",
 	).Doc(userId)
@@ -111,8 +160,10 @@ func (db *firestoreDB) DeleteProfile(userId string) error {
 }
 
 // UpdateProfile updates the entry for a given profile.
-func (db *firestoreDB) UpdateProfile(p *datastore.Profile) error {
-	ctx := context.Background()
+func (db *firestoreDB) UpdateProfile(
+	ctx context.Context,
+	p *datastore.Profile,
+) error {
 	doc := db.client.Collection(
 		"profiles",
 	).Doc(p.UserId.Id)
@@ -129,6 +180,7 @@ func (db *firestoreDB) UpdateProfile(p *datastore.Profile) error {
 // ListFilesSharedBy returns a list of files, ordered by timestamp,
 //filtered by the profile who shared the files.
 func (db *firestoreDB) ListFilesSharedBy(
+	ctx context.Context,
 	userId string,
 ) (*datastore.Files, error) {
 	return nil, fmt.Errorf(
@@ -136,12 +188,10 @@ func (db *firestoreDB) ListFilesSharedBy(
 	)
 }
 
-func (db *firestoreDB) ListProfiles() ([]*datastore.Profile, error) {
-	return nil, nil
-}
-
-func (db *firestoreDB) RegenProfile(p *datastore.Profile) error {
-	ctx := context.Background()
+func (db *firestoreDB) RegenProfile(
+	ctx context.Context,
+	p *datastore.Profile,
+) error {
 	doc := db.client.Collection(
 		"profiles",
 	).Doc(p.UserId.Id)
@@ -156,10 +206,10 @@ func (db *firestoreDB) RegenProfile(p *datastore.Profile) error {
 }
 
 func (db *firestoreDB) IsBlocked(
+	ctx context.Context,
 	userId string,
 	blocked string,
 ) (bool, error) {
-	ctx := context.Background()
 	doc := db.client.Collection(
 		"blocked",
 	).Doc(userId)
@@ -186,11 +236,11 @@ func (db *firestoreDB) IsBlocked(
 }
 
 func (db *firestoreDB) GetMonetaryTransferWithDate(
+	ctx context.Context,
 	userId string,
 	date time.Time,
 	snowflake string,
 ) (*datastore.MonetaryTransfer, error) {
-	ctx := context.Background()
 	dt := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, time.UTC)
 	doc := db.client.Collection(
 		buildCollectionPathWithDate(userId, dt),
@@ -214,11 +264,11 @@ func (db *firestoreDB) GetMonetaryTransferWithDate(
 }
 
 func (db *firestoreDB) GetMonetaryTransferWithDateString(
+	ctx context.Context,
 	userId string,
 	date string,
 	snowflake string,
 ) (*datastore.MonetaryTransfer, error) {
-	ctx := context.Background()
 	doc := db.client.Collection(
 		buildCollectionPath(userId, date),
 	).Doc(snowflake)
@@ -241,6 +291,7 @@ func (db *firestoreDB) GetMonetaryTransferWithDateString(
 }
 
 func (db *firestoreDB) GetMonetaryTransfersDate(
+	ctx context.Context,
 	userId string,
 	dateBefore time.Time,
 ) ([]*datastore.MonetaryTransfer, error) {
@@ -282,11 +333,11 @@ func (db *firestoreDB) GetMonetaryTransfersDate(
 }
 
 func collectFromDate(
+	ctx context.Context,
 	pathRoot string,
 	dt time.Time,
 	db *firestoreDB,
 ) {
-	ctx := context.Background()
 	path := pathRoot + dt.Format("2006-01")
 	docIter := db.client.Collection(path).Documents(ctx)
 	doc, err := docIter.Next()
@@ -305,6 +356,7 @@ func collectFromDate(
 }
 
 func (db *firestoreDB) GetMonetaryTransfersInterval(
+	ctx context.Context,
 	userId string,
 	dateAfter time.Time,
 	dateBefore time.Time,
@@ -313,11 +365,11 @@ func (db *firestoreDB) GetMonetaryTransfersInterval(
 }
 
 func (db *firestoreDB) GetMonetaryTransfersFromGroup(
+	ctx context.Context,
 	userId string,
 	date time.Time,
 	groupId int64,
 ) ([]*datastore.MonetaryTransfer, error) {
-	ctx := context.Background()
 	dt := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, time.UTC)
 	docs, err := db.client.Collection(
 		buildCollectionPathWithDate(userId, dt),
@@ -344,6 +396,7 @@ func (db *firestoreDB) GetMonetaryTransfersFromGroup(
 }
 
 func (db *firestoreDB) GetMonetaryTransfersRecurrent(
+	ctx context.Context,
 	userId string,
 	recurrentId int64,
 ) ([]*datastore.MonetaryTransfer, error) {
@@ -351,19 +404,31 @@ func (db *firestoreDB) GetMonetaryTransfersRecurrent(
 }
 
 func (db *firestoreDB) SetMonetaryTransfer(
+	ctx context.Context,
 	userId string,
 	transfer *datastore.MonetaryTransfer,
 	path string,
 ) (string, error) {
-	ctx := context.Background()
 	pathT := buildCollectionPath(userId, path)
-	doc, wr, err := db.client.Collection(
+	return db.SetMonetaryTransferByFullPath(
+		ctx,
+		transfer,
 		pathT,
+	)
+}
+
+func (db *firestoreDB) SetMonetaryTransferByFullPath(
+	ctx context.Context,
+	transfer *datastore.MonetaryTransfer,
+	fullPath string,
+) (string, error) {
+	doc, wr, err := db.client.Collection(
+		fullPath,
 	).Add(ctx, transfer)
 	if err != nil {
 		return "", fmt.Errorf(
 			"datastoredb: failed to add monetary transfer in %v: %v %v",
-			pathT,
+			fullPath,
 			wr,
 			err,
 		)
@@ -372,15 +437,27 @@ func (db *firestoreDB) SetMonetaryTransfer(
 }
 
 func (db *firestoreDB) SetMonetaryTransfers(
+	ctx context.Context,
 	userId string,
 	transfers []*datastore.MonetaryTransfer,
 	path string,
 ) error {
-	ctx := context.Background()
 	pathT := buildCollectionPath(userId, path)
+	return db.SetMonetaryTransfersByFullPath(
+		ctx,
+		transfers,
+		pathT,
+	)
+}
+
+func (db *firestoreDB) SetMonetaryTransfersByFullPath(
+	ctx context.Context,
+	transfers []*datastore.MonetaryTransfer,
+	fullPath string,
+) error {
 	batch := db.client.Batch()
 	cl := db.client.Collection(
-		pathT,
+		fullPath,
 	)
 	for _, transfer := range transfers {
 		doc := cl.NewDoc()

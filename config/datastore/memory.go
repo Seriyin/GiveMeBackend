@@ -5,6 +5,7 @@
 package datastore
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"sync"
@@ -40,7 +41,10 @@ func (db *memoryDB) Close() error {
 }
 
 // GetProfile retrieves a profile by its ID.
-func (db *memoryDB) GetProfile(id string) (*Profile, error) {
+func (db *memoryDB) GetProfile(
+	ctx context.Context,
+	id string,
+) (*Profile, error) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -51,8 +55,25 @@ func (db *memoryDB) GetProfile(id string) (*Profile, error) {
 	return profile, nil
 }
 
+func (db *memoryDB) GetProfileIdByPhoneNumber(
+	ctx context.Context,
+	phoneNumber string,
+) (string, error) {
+	panic("implement me")
+}
+
+func (db *memoryDB) GetProfileByPhoneNumber(
+	ctx context.Context,
+	phoneNumber string,
+) (string, *Profile, error) {
+	panic("implement me")
+}
+
 // AddProfile saves a given profile, assigning it a new ID.
-func (db *memoryDB) AddProfile(p *Profile) (id string, err error) {
+func (db *memoryDB) AddProfile(
+	ctx context.Context,
+	p *Profile,
+) (id string, err error) {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -62,7 +83,10 @@ func (db *memoryDB) AddProfile(p *Profile) (id string, err error) {
 }
 
 // DeleteProfile removes a given profile by its ID.
-func (db *memoryDB) DeleteProfile(id string) error {
+func (db *memoryDB) DeleteProfile(
+	ctx context.Context,
+	id string,
+) error {
 	if id == "" {
 		return errors.New("memorydb: profile with unassigned ID passed into deleteProfile")
 	}
@@ -78,7 +102,10 @@ func (db *memoryDB) DeleteProfile(id string) error {
 }
 
 // UpdateProfile updates the entry for a given profile.
-func (db *memoryDB) UpdateProfile(p *Profile) error {
+func (db *memoryDB) UpdateProfile(
+	ctx context.Context,
+	p *Profile,
+) error {
 	if p.UserId.Id == "" {
 		return errors.New("memorydb: profile with unassigned ID passed into updateProfile")
 	}
@@ -103,17 +130,10 @@ func (db *memoryDB) ListFilesSharedBy(userID string) (*Files, error) {
 	return nil, nil
 }
 
-func (db *memoryDB) ListProfiles() ([]*Profile, error) {
-	profiles := make([]*Profile, len(db.profiles))
-	i := 0
-	for _, p := range db.profiles {
-		profiles[i] = p
-		i++
-	}
-	return profiles, nil
-}
-
-func (db *memoryDB) RegenProfile(p *Profile) error {
+func (db *memoryDB) RegenProfile(
+	ctx context.Context,
+	p *Profile,
+) error {
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
@@ -123,6 +143,7 @@ func (db *memoryDB) RegenProfile(p *Profile) error {
 }
 
 func (db *memoryDB) IsBlocked(
+	ctx context.Context,
 	userId string,
 	blocked string,
 ) (bool, error) {
@@ -135,6 +156,7 @@ func (db *memoryDB) IsBlocked(
 }
 
 func (db *memoryDB) GetMonetaryTransferWithDate(
+	ctx context.Context,
 	userId string,
 	date time.Time,
 	snowflake string,
@@ -143,6 +165,7 @@ func (db *memoryDB) GetMonetaryTransferWithDate(
 }
 
 func (db *memoryDB) GetMonetaryTransferWithDateString(
+	ctx context.Context,
 	userId string,
 	date string,
 	snowflake string,
@@ -151,6 +174,7 @@ func (db *memoryDB) GetMonetaryTransferWithDateString(
 }
 
 func (db *memoryDB) GetMonetaryTransfersDate(
+	ctx context.Context,
 	userId string,
 	dateBefore time.Time,
 ) ([]*MonetaryTransfer, error) {
@@ -158,6 +182,7 @@ func (db *memoryDB) GetMonetaryTransfersDate(
 }
 
 func (db *memoryDB) GetMonetaryTransfersInterval(
+	ctx context.Context,
 	userId string,
 	dateAfter time.Time,
 	dateBefore time.Time,
@@ -166,13 +191,16 @@ func (db *memoryDB) GetMonetaryTransfersInterval(
 }
 
 func (db *memoryDB) GetMonetaryTransfersFromGroup(
+	ctx context.Context,
 	userId string,
+	date time.Time,
 	groupId int64,
 ) ([]*MonetaryTransfer, error) {
 	panic("implement me")
 }
 
 func (db *memoryDB) GetMonetaryTransfersRecurrent(
+	ctx context.Context,
 	userId string,
 	recurrentId int64,
 ) ([]*MonetaryTransfer, error) {
@@ -180,6 +208,7 @@ func (db *memoryDB) GetMonetaryTransfersRecurrent(
 }
 
 func (db *memoryDB) SetMonetaryTransfer(
+	ctx context.Context,
 	userId string,
 	transfer *MonetaryTransfer,
 	path string,
@@ -187,10 +216,27 @@ func (db *memoryDB) SetMonetaryTransfer(
 	panic("implement me")
 }
 
+func (db *memoryDB) SetMonetaryTransferByFullPath(
+	ctx context.Context,
+	transfer *MonetaryTransfer,
+	fullPath string,
+) (string, error) {
+	panic("implement me")
+}
+
 func (db *memoryDB) SetMonetaryTransfers(
+	ctx context.Context,
 	userId string,
 	transfer []*MonetaryTransfer,
 	path string,
+) error {
+	panic("implement me")
+}
+
+func (db *memoryDB) SetMonetaryTransfersByFullPath(
+	ctx context.Context,
+	transfer []*MonetaryTransfer,
+	fullPath string,
 ) error {
 	panic("implement me")
 }

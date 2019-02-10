@@ -10,7 +10,7 @@ type UID struct {
 	Id     string `firestore:"id" json:"id"`
 	Device []byte `firestore:"device" json:"device"`
 	PubKey []byte `firestore:"pub_key" json:"pub_key"`
-	Token  []byte `firestore:"token" json:"token"`
+	Token  string `firestore:"token" json:"token"`
 	Name   string `firestore:"name" json:"name"`
 	Email  string `firestore:"email" json:"email"`
 	//	SignedPreKey io.ReadWriter

@@ -1,6 +1,9 @@
 package datastore
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 // Interface for defining operations over underlying DB
 // needed for the entire service.
@@ -9,6 +12,7 @@ type GiveMeDatabase interface {
 
 	//Check if a user is blocked by a given user with userId.
 	IsBlocked(
+		ctx context.Context,
 		userId string,
 		blocked string,
 	) (bool, error)
@@ -18,19 +22,46 @@ type GiveMeDatabase interface {
 	// ListFilesSharedBy(userId string) (*Files, error)
 
 	// GetProfile retrieves a profile by its ID.
-	GetProfile(userId string) (*Profile, error)
+	GetProfile(
+		ctx context.Context,
+		userId string,
+	) (*Profile, error)
+
+	// GetProfileByPhoneNumber retrieves a profile and Id by its associated phone number.
+	GetProfileByPhoneNumber(
+		ctx context.Context,
+		phoneNumber string,
+	) (string, *Profile, error)
+
+	// GetProfileIdByPhoneNumber retrieves a profile's Id by its associated phone number.
+	GetProfileIdByPhoneNumber(
+		ctx context.Context,
+		phoneNumber string,
+	) (string, error)
 
 	// AddProfile saves a given profile, assigning it a new ID.
-	AddProfile(p *Profile) (userId string, err error)
+	AddProfile(
+		ctx context.Context,
+		p *Profile,
+	) (userId string, err error)
 
 	// DeleteProfile removes a given profile by its ID.
-	DeleteProfile(userId string) error
+	DeleteProfile(
+		ctx context.Context,
+		userId string,
+	) error
 
 	// UpdateProfile updates the entry for a given profile.
-	UpdateProfile(p *Profile) error
+	UpdateProfile(
+		ctx context.Context,
+		p *Profile,
+	) error
 
 	// RegenProfile discards and reinitializes known profile
-	RegenProfile(p *Profile) error
+	RegenProfile(
+		ctx context.Context,
+		p *Profile,
+	) error
 
 	// Close closes the database, freeing up any available resources.
 	Close() error
@@ -42,6 +73,7 @@ type GiveMeDatabase interface {
 
 	// GetMonetaryTransfer by unique id (snowflake).
 	GetMonetaryTransferWithDate(
+		ctx context.Context,
 		userId string,
 		date time.Time,
 		snowflake string,
@@ -49,6 +81,7 @@ type GiveMeDatabase interface {
 
 	// GetMonetaryTransfer by unique id (snowflake).
 	GetMonetaryTransferWithDateString(
+		ctx context.Context,
 		userId string,
 		date string,
 		snowflake string,
@@ -56,12 +89,14 @@ type GiveMeDatabase interface {
 
 	// GetMonetaryTransfers by current date until dateBefore.
 	GetMonetaryTransfersDate(
+		ctx context.Context,
 		userId string,
 		dateBefore time.Time,
 	) ([]*MonetaryTransfer, error)
 
 	// GetMonetaryTransfers between two dates.
 	GetMonetaryTransfersInterval(
+		ctx context.Context,
 		userId string,
 		dateAfter time.Time,
 		dateBefore time.Time,
@@ -69,6 +104,7 @@ type GiveMeDatabase interface {
 
 	// GetMonetaryTransfers for a group transfer.
 	GetMonetaryTransfersFromGroup(
+		ctx context.Context,
 		userId string,
 		date time.Time,
 		groupId int64,
@@ -76,19 +112,34 @@ type GiveMeDatabase interface {
 
 	// GetMonetaryTransfers for a recurrent transfer.
 	GetMonetaryTransfersRecurrent(
+		ctx context.Context,
 		userId string,
 		recurrentId int64,
 	) ([]*MonetaryTransfer, error)
 
 	SetMonetaryTransfer(
+		ctx context.Context,
 		userId string,
 		transfer *MonetaryTransfer,
 		path string,
 	) (string, error)
 
+	SetMonetaryTransferByFullPath(
+		ctx context.Context,
+		transfer *MonetaryTransfer,
+		fullPath string,
+	) (string, error)
+
 	SetMonetaryTransfers(
+		ctx context.Context,
 		userId string,
 		transfer []*MonetaryTransfer,
 		path string,
+	) error
+
+	SetMonetaryTransfersByFullPath(
+		ctx context.Context,
+		transfer []*MonetaryTransfer,
+		fullPath string,
 	) error
 }
