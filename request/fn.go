@@ -25,6 +25,8 @@ func Request(
 		return err
 	}
 
+	// If no profile can be gathered, the user may not exist.
+	// Either by network error or profile not existing, must return.
 	id, profile, err := db.GetProfileByPhoneNumber(ctx, monetaryT.To)
 	if err != nil {
 		return err
