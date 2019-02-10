@@ -70,6 +70,7 @@ type GiveMeDatabase interface {
 	// GetMonetaryTransfers for a group transfer.
 	GetMonetaryTransfersFromGroup(
 		userId string,
+		date time.Time,
 		groupId int64,
 	) ([]*MonetaryTransfer, error)
 

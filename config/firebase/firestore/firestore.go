@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"google.golang.org/api/iterator"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/Seriyin/GibMe-backend/config/datastore"
@@ -192,7 +193,7 @@ func (db *firestoreDB) GetMonetaryTransferWithDate(
 	ctx := context.Background()
 	dt := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, time.UTC)
 	doc := db.client.Collection(
-		"monetary_transfer/" + userId + "/" + dt.Format("Jan 2006") + "/",
+		buildCollectionPathWithDate(userId, dt),
 	).Doc(snowflake)
 	docSnap, err := doc.Get(ctx)
 	if err != nil {
@@ -219,7 +220,7 @@ func (db *firestoreDB) GetMonetaryTransferWithDateString(
 ) (*datastore.MonetaryTransfer, error) {
 	ctx := context.Background()
 	doc := db.client.Collection(
-		"monetary_transfer/" + userId + "/" + date + "/",
+		buildCollectionPath(userId, date),
 	).Doc(snowflake)
 	docSnap, err := doc.Get(ctx)
 	if err != nil {
@@ -243,7 +244,7 @@ func (db *firestoreDB) GetMonetaryTransfersDate(
 	userId string,
 	dateBefore time.Time,
 ) ([]*datastore.MonetaryTransfer, error) {
-	pathRoot := "monetary_transfer/" + userId
+	pathRoot := "MonetaryTransfer/" + userId + "/"
 
 	now := time.Now()
 	dt := time.Date(
@@ -286,7 +287,7 @@ func collectFromDate(
 	db *firestoreDB,
 ) {
 	ctx := context.Background()
-	path := pathRoot + "/" + dt.Format("Jan 2006") + "/"
+	path := pathRoot + dt.Format("2006-01")
 	docIter := db.client.Collection(path).Documents(ctx)
 	doc, err := docIter.Next()
 	var mon datastore.MonetaryTransfer
@@ -313,9 +314,33 @@ func (db *firestoreDB) GetMonetaryTransfersInterval(
 
 func (db *firestoreDB) GetMonetaryTransfersFromGroup(
 	userId string,
+	date time.Time,
 	groupId int64,
 ) ([]*datastore.MonetaryTransfer, error) {
-	panic("implement me")
+	ctx := context.Background()
+	dt := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, time.UTC)
+	docs, err := db.client.Collection(
+		buildCollectionPathWithDate(userId, dt),
+	).Where("groupId", "==", groupId).Documents(ctx).GetAll()
+	if err != nil {
+		return nil, fmt.Errorf(
+			"datastoredb: could not get MonetaryTransfers: %v",
+			err,
+		)
+	}
+	mts := make([]*datastore.MonetaryTransfer, len(docs))
+	for _, r := range docs {
+		var mon datastore.MonetaryTransfer
+		err = r.DataTo(&mon)
+		if err != nil {
+			return nil, fmt.Errorf(
+				"datastoredb: could not convert to monetary_transfer: %v",
+				err,
+			)
+		}
+		mts = append(mts, &mon)
+	}
+	return mts, nil
 }
 
 func (db *firestoreDB) GetMonetaryTransfersRecurrent(
@@ -331,7 +356,7 @@ func (db *firestoreDB) SetMonetaryTransfer(
 	path string,
 ) (string, error) {
 	ctx := context.Background()
-	pathT := "monetary_transfer/" + userId + "/" + path
+	pathT := buildCollectionPath(userId, path)
 	doc, wr, err := db.client.Collection(
 		pathT,
 	).Add(ctx, transfer)
@@ -352,7 +377,7 @@ func (db *firestoreDB) SetMonetaryTransfers(
 	path string,
 ) error {
 	ctx := context.Background()
-	pathT := "monetary_transfer/" + userId + "/" + path
+	pathT := buildCollectionPath(userId, path)
 	batch := db.client.Batch()
 	cl := db.client.Collection(
 		pathT,
@@ -363,6 +388,27 @@ func (db *firestoreDB) SetMonetaryTransfers(
 	}
 	_, err := batch.Commit(ctx)
 	return err
+}
+
+func buildCollectionPathWithDate(
+	userId string,
+	date time.Time,
+) string {
+	dateString := date.Format("2006-01")
+	return buildCollectionPath(userId, dateString)
+}
+
+func buildCollectionPath(
+	userId string,
+	path string,
+) string {
+	str := strings.Builder{}
+	str.Grow(len(userId) + 20)
+	str.WriteString("MoneyTransfer/")
+	str.WriteString(userId)
+	str.WriteByte('/')
+	str.WriteString(path)
+	return str.String()
 }
 
 // Event is the payload of a Firestore event.
