@@ -65,7 +65,7 @@ func extractIndividualTos(
 
 	for _, to := range groupT.Tos {
 		m := &datastore.MonetaryTransfer{
-			From:          groupT.From, //missing from grouptransfer
+			From:          groupT.From,
 			To:            to,
 			Desc:          groupT.Desc,
 			Date:          groupT.Date,
@@ -88,7 +88,12 @@ func extractIndividualTos(
 			_, err = db.SetMonetaryTransferByFullPath(ctx, m, dbPath)
 		}
 		//skip otherwise
-
+		err = produceAndSendNotification(
+			ctx,
+			profile,
+			&m,
+		)
+		return err
 	}
 	return monetaryTs
 }
@@ -129,4 +134,26 @@ func extractDivide(totalValue int64, groupNum int64) (int64, int64, error) {
 		return -1, -1, err
 	}
 	return newAmountUnit, newAmountCents, err
+}
+
+func produceAndSendNotification(
+	ctx context.Context,
+	profile *datastore.Profile,
+	transfer *datastore.MonetaryTransfer,
+) error {
+	//generate notification message
+	token := profile.Token
+	message := messaging.GenerateRequestNotification(
+		token,
+		transfer.AmountUnit,
+		transfer.AmountCents,
+		transfer.Currency,
+		transfer.From,
+	)
+
+	str, err := mesClient.Send(ctx, message)
+	if err != nil {
+		log.Print(str)
+	}
+	return err
 }
