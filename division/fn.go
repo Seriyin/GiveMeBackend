@@ -4,14 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strconv"
-	"strings"
-	"time"
-
 	"github.com/Seriyin/GibMe-backend/config/datastore"
 	"github.com/Seriyin/GibMe-backend/config/firebase"
 	"github.com/Seriyin/GibMe-backend/config/firebase/firestore"
-	"github.com/Seriyin/GibMe-backend/config/firebase/messaging"
+	"github.com/Seriyin/GibMe-backend/config/firebase/paths"
+	"strconv"
+	"strings"
 )
 
 var db = firebase.GetDB()
@@ -22,73 +20,113 @@ func Division(
 	e firestore.Event,
 ) error {
 	var groupT datastore.GroupTransfer
-	time := time.Now()
 	err := json.Unmarshal(e.Value.Fields, &groupT)
 	if err != nil {
 		return err
 	}
-	totalvalue := groupT.AmountUnit*100 + groupT.AmountCents
-	var dividedvalue float64
-	var newAmountUnit int64
-	var newAmountCents int64
-	if groupT.Included {
-		dividedvalue = float64(totalvalue/(len(groupT.Tos)+1))
-		st := fmt.Sprintf("%f", dividedvalue)
-		sp := strings.Split(a, ".")
-		newAmountUnit = strconv.ParseInt(sp[0], 10, 64)
-		newAmountCents = strconv.ParseInt(sp[1], 10, 64)
+
+	newAmountUnit, newAmountCents, err := calculateResultingAmounts(&groupT)
+
+	if err != nil {
+		return err
 	}
-	else {
-		dividedvalue = float64(totalvalue/(len(groupT.Tos))
-		st := fmt.Sprintf("%f", dividedvalue)
-		sp := strings.Split(a, ".")
-		newAmountUnit = strconv.ParseInt(sp[0], 10, 64)
-		newAmountCents = strconv.ParseInt(sp[1], 10, 64)
-	}
-	monetaryTs := make([]*datastore.MonetaryTransfer, len(groupT.Tos)) 
+
+	monPath := paths.TransformGroupIntoMonetary(e.Value.Name)
+
+	monetaryTs := extractIndividualTos(
+		ctx,
+		monPath,
+		&groupT,
+		newAmountUnit,
+		newAmountCents,
+	)
+
+	dbPath := paths.ExtractMethodIdAndDatePath(monPath)
+	err = db.SetMonetaryTransfersByFullPath(
+		ctx,
+		monetaryTs,
+		dbPath,
+	)
+
+	return err
+}
+
+func extractIndividualTos(
+	ctx context.Context,
+	networkPath string,
+	groupT *datastore.GroupTransfer,
+	newAmountUnit int64,
+	newAmountCents int64,
+) []*datastore.MonetaryTransfer {
+	monetaryTs := make(
+		[]*datastore.MonetaryTransfer,
+		len(groupT.Tos),
+	)
+
 	for _, to := range groupT.Tos {
-		m := datastore.MonetaryTransfer{
-			From: "IMPLEMENT ME", //missing from grouptransfer
-			To: to,
-			Desc: "Debt Division",
-			Date: time,
-			AmountUnit: newAmountUnit,
-			AmountCents: newAmountCents,
-			Currency: "IMPLEMENT ME", //missing from grouptransfer
+		m := &datastore.MonetaryTransfer{
+			From:          groupT.From, //missing from grouptransfer
+			To:            to,
+			Desc:          groupT.Desc,
+			Date:          groupT.Date,
+			AmountUnit:    newAmountUnit,
+			AmountCents:   newAmountCents,
+			Currency:      "€", //missing from grouptransfer
 			ConfirmedFrom: false,
-			ConfirmedTo: false,
-			GroupId: groupT.GroupId,
-			RecurrentId: ,
+			ConfirmedTo:   false,
+			GroupId:       groupT.GroupId,
+			RecurrentId:   -1,
 		}
 		monetaryTs = append(monetaryTs, m)
 
-		path := "CREATE PATH" //IMPLEMENT
-		_, err := firestore.SetMonetaryTransfer(to,&m,path)
-		if err != nil {
-			return err
-		}
+		// If no profile can be gathered, the user may not exist.
+		// Either by network error or profile not existing, must skip.
+		profile, err := db.GetProfileByPhoneNumber(ctx, to)
+		if err == nil {
+			dbPath := paths.ExtractAndReplaceMethodIdAndDatePath(profile.Id, networkPath)
 
-		//generate notification message
-		token := "" //IMPLEMENT ME
-		message := messaging.GenerateRequestNotification(
-			token,
-			m.AmountUnit,
-			m.AmountCents,
-			m.Currency,
-			m.From,
+			_, err = db.SetMonetaryTransferByFullPath(ctx, m, dbPath)
+		}
+		//skip otherwise
+
+	}
+	return monetaryTs
+}
+
+func calculateResultingAmounts(groupT *datastore.GroupTransfer) (int64, int64, error) {
+	totalValue := groupT.AmountUnit*100 + groupT.AmountCents
+
+	var newAmountUnit int64
+	var newAmountCents int64
+	var err error
+	if groupT.Included {
+		newAmountUnit, newAmountCents, err = extractDivide(
+			totalValue,
+			int64(len(groupT.Tos)+1),
 		)
+	} else {
+		newAmountUnit, newAmountCents, err = extractDivide(
+			totalValue,
+			int64(len(groupT.Tos)),
+		)
+	}
+	if err != nil {
+		return -1, -1, err
+	}
+	return newAmountUnit, newAmountCents, nil
+}
 
-		var str string
-		str, err = mesClient.Send(ctx, message)
-		if err != nil {
-			log.Print(str)
-		}
-		return err
-	} 
-	path := "CREATE PATH" //IMPLEMENT
-	err := firestore.SetMonetaryTransfers(
-		"MISSING FROM from grouptransfer",
-		&monetaryTs,
-		path,
-	)
+func extractDivide(totalValue int64, groupNum int64) (int64, int64, error) {
+	dividedvalue := float64(totalValue) / float64(groupNum)
+	st := fmt.Sprintf("%.2f", dividedvalue)
+	sp := strings.Split(st, ".")
+	newAmountUnit, err := strconv.ParseInt(sp[0], 10, 64)
+	if err != nil {
+		return -1, -1, err
+	}
+	newAmountCents, err := strconv.ParseInt(sp[1], 10, 64)
+	if err != nil {
+		return -1, -1, err
+	}
+	return newAmountUnit, newAmountCents, err
 }
