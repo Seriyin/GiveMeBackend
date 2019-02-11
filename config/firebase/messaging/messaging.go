@@ -1,8 +1,9 @@
 package messaging
 
 import (
-	"firebase.google.com/go/messaging"
 	"fmt"
+
+	"firebase.google.com/go/messaging"
 )
 
 func GenerateRequestNotification(
@@ -149,6 +150,60 @@ func GenerateScheduled(
 				Title: "Scheduled Debt Payment",
 				Body: fmt.Sprintf(
 					"A debt was scheduled of %v.%v%v",
+					amountUnits,
+					amountCents,
+					currency,
+				),
+				Color: "#161119",
+			},
+			RestrictedPackageName: "com.giveme.pei.givemeapp",
+		},
+		Token: token,
+	}
+}
+
+func GenerateConfirmedFromNotification(
+	token string,
+	amountUnits int64,
+	amountCents int64,
+	currency string,
+	from string,
+) *messaging.Message {
+	return &messaging.Message{
+		Android: &messaging.AndroidConfig{
+			Priority: "normal",
+			Notification: &messaging.AndroidNotification{
+				Title: "Creditor confirmed payment",
+				Body: fmt.Sprintf(
+					"%v received your payment of %v.%v%v",
+					from,
+					amountUnits,
+					amountCents,
+					currency,
+				),
+				Color: "#161119",
+			},
+			RestrictedPackageName: "com.giveme.pei.givemeapp",
+		},
+		Token: token,
+	}
+}
+
+func GenerateConfirmedToNotification(
+	token string,
+	amountUnits int64,
+	amountCents int64,
+	currency string,
+	to string,
+) *messaging.Message {
+	return &messaging.Message{
+		Android: &messaging.AndroidConfig{
+			Priority: "normal",
+			Notification: &messaging.AndroidNotification{
+				Title: "Creditor confirmed payment",
+				Body: fmt.Sprintf(
+					"%v payed a debt of %v.%v%v",
+					from,
 					amountUnits,
 					amountCents,
 					currency,
