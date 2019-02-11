@@ -31,7 +31,7 @@ type GiveMeDatabase interface {
 	GetProfileByPhoneNumber(
 		ctx context.Context,
 		phoneNumber string,
-	) (string, *Profile, error)
+	) (*Profile, error)
 
 	// GetProfileIdByPhoneNumber retrieves a profile's Id by its associated phone number.
 	GetProfileIdByPhoneNumber(

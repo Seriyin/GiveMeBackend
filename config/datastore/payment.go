@@ -28,7 +28,7 @@ func (p *PaypalProvider) GetDetails() interface{} {
 
 type DefaultProvider struct {
 	Id   string `firestore:"id" json:"id"`
-	IBAN string `firestore:"iban" json:"iban"`
+	IBAN string `firestore:"IBAN" json:"IBAN"`
 }
 
 func (d *DefaultProvider) GetId() string {

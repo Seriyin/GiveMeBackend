@@ -19,13 +19,15 @@ type MonetaryTransfer struct {
 }
 
 type GroupTransfer struct {
-	GroupId     int64     `firebase:"groupId" json:"groupId"`
-	Included    bool      `firebase:"included" json:"included"`
+	From        string    `firebase:"from" json:"from"`
+	Tos         []string  `firebase:"tos" json:"tos"`
+	Desc        string    `firebase:"desc" json:"desc"`
 	Date        time.Time `firebase:"date" json:"date"`
+	Included    bool      `firebase:"included" json:"included"`
 	AmountUnit  int64     `firebase:"amountUnit" json:"amountUnit"`
 	AmountCents int64     `firebase:"amountCents" json:"amountCents"`
 	Currency    string    `firebase:"currency" json:"currency"`
-	Tos         []string  `firebase:"tos" json:"tos"`
+	GroupId     int64     `firebase:"groupId" json:"groupId"`
 }
 
 type RecurrentTransfer struct {

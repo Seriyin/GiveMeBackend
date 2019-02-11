@@ -82,24 +82,28 @@ func (db *firestoreDB) GetProfile(
 func (db *firestoreDB) GetProfileByPhoneNumber(
 	ctx context.Context,
 	phoneNumber string,
-) (string, *datastore.Profile, error) {
-	docs := db.client.Collection("Profiles").Where("id", "==", phoneNumber).Documents(ctx)
+) (*datastore.Profile, error) {
+	docs := db.client.Collection("Profiles").Where(
+		"id",
+		"==",
+		phoneNumber,
+	).Documents(ctx)
 	profile := &datastore.Profile{}
 	defer docs.Stop()
 	docSnap, err := docs.Next()
 	if err != nil {
-		return "", nil, fmt.Errorf(
+		return nil, fmt.Errorf(
 			"datastoredb: could not get Profile: %v",
 			err,
 		)
 	}
 	if err := docSnap.DataTo(profile); err != nil {
-		return "", nil, fmt.Errorf(
+		return nil, fmt.Errorf(
 			"datastoredb: could not populate Profile: %v",
 			err,
 		)
 	}
-	return docSnap.Ref.ID, profile, nil
+	return profile, nil
 }
 
 // GetProfileIdByPhoneNumber retrieves a profile's Id by its associated phone number.
@@ -130,7 +134,7 @@ func (db *firestoreDB) AddProfile(
 ) (string, error) {
 	doc := db.client.Collection(
 		"profiles",
-	).Doc(p.UserId.Id)
+	).Doc(p.Id)
 	_, err := doc.Create(ctx, p)
 	if err != nil {
 		return "", fmt.Errorf(
@@ -138,7 +142,7 @@ func (db *firestoreDB) AddProfile(
 			err,
 		)
 	}
-	return p.UserId.Id, nil
+	return p.Id, nil
 }
 
 // DeleteProfile removes a given profile by its ID.
@@ -166,7 +170,7 @@ func (db *firestoreDB) UpdateProfile(
 ) error {
 	doc := db.client.Collection(
 		"profiles",
-	).Doc(p.UserId.Id)
+	).Doc(p.Id)
 	_, err := doc.Set(ctx, p, firestore.MergeAll)
 	if err != nil {
 		return fmt.Errorf(
@@ -194,7 +198,7 @@ func (db *firestoreDB) RegenProfile(
 ) error {
 	doc := db.client.Collection(
 		"profiles",
-	).Doc(p.UserId.Id)
+	).Doc(p.Id)
 	_, err := doc.Set(ctx, p)
 	if err != nil {
 		return fmt.Errorf(

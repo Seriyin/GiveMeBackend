@@ -1,15 +1,16 @@
 package datastore
 
 type Profile struct {
-	UserId   UID      `firestore:"user_id" json:"user_id"`
-	Metadata Metadata `firestore:"metadata" json:"metadata"`
+	UID
+	Metadata
 }
 
 type UID struct {
-	//Id should be phone number.
+	//Id should be auth token.
 	Id     string `firestore:"id" json:"id"`
+	Phone  string `firestore:"phone" json:"phone"`
 	Device []byte `firestore:"device" json:"device"`
-	PubKey []byte `firestore:"pub_key" json:"pub_key"`
+	PubKey []byte `firestore:"pubKey" json:"pubKey"`
 	Token  string `firestore:"token" json:"token"`
 	Name   string `firestore:"name" json:"name"`
 	Email  string `firestore:"email" json:"email"`
@@ -18,6 +19,6 @@ type UID struct {
 }
 
 type Metadata struct {
-	PaymentProviders []PaymentProvider `firestore:"payment_providers" json:"payment_providers"`
-	NumberPayments   uint64            `firestore:"number_payments" json:"number_payments"`
+	PaymentProviders []PaymentProvider `firestore:"paymentProviders" json:"paymentProviders"`
+	NumberPayments   uint64            `firestore:"numberPayments" json:"numberPayments"`
 }

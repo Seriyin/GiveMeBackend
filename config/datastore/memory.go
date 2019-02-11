@@ -65,7 +65,7 @@ func (db *memoryDB) GetProfileIdByPhoneNumber(
 func (db *memoryDB) GetProfileByPhoneNumber(
 	ctx context.Context,
 	phoneNumber string,
-) (string, *Profile, error) {
+) (*Profile, error) {
 	panic("implement me")
 }
 
@@ -77,9 +77,9 @@ func (db *memoryDB) AddProfile(
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
-	db.profiles[p.UserId.Id] = p
+	db.profiles[p.Id] = p
 
-	return p.UserId.Id, nil
+	return p.Id, nil
 }
 
 // DeleteProfile removes a given profile by its ID.
@@ -106,14 +106,14 @@ func (db *memoryDB) UpdateProfile(
 	ctx context.Context,
 	p *Profile,
 ) error {
-	if p.UserId.Id == "" {
+	if p.Id == "" {
 		return errors.New("memorydb: profile with unassigned ID passed into updateProfile")
 	}
 
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
-	db.profiles[p.UserId.Id] = p
+	db.profiles[p.Id] = p
 	return nil
 }
 
@@ -137,7 +137,7 @@ func (db *memoryDB) RegenProfile(
 	db.mutex.Lock()
 	defer db.mutex.Unlock()
 
-	db.profiles[p.UserId.Id] = p
+	db.profiles[p.Id] = p
 
 	return nil
 }
