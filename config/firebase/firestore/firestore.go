@@ -1,14 +1,15 @@
 package firestore
 
 import (
-	"cloud.google.com/go/firestore"
 	"context"
 	"encoding/json"
 	"fmt"
-	"google.golang.org/api/iterator"
 	"log"
 	"strings"
 	"time"
+
+	"cloud.google.com/go/firestore"
+	"google.golang.org/api/iterator"
 
 	"github.com/Seriyin/GibMe-backend/config/datastore"
 )
@@ -469,6 +470,16 @@ func (db *firestoreDB) SetMonetaryTransfersByFullPath(
 	}
 	_, err := batch.Commit(ctx)
 	return err
+}
+
+func (db *firestoreDB) UpdateMonetaryTransferConfirmed(
+	ctx context.Context,
+	userId string,
+	confirmedFrom bool, //If false ignore
+	confirmedToo bool, //If false ignore
+	path string,
+) error {
+	panic("implement me")
 }
 
 func buildCollectionPathWithDate(
