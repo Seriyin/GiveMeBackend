@@ -7,7 +7,9 @@ import (
 	"github.com/Seriyin/GibMe-backend/config/datastore"
 	"github.com/Seriyin/GibMe-backend/config/firebase"
 	"github.com/Seriyin/GibMe-backend/config/firebase/firestore"
+	"github.com/Seriyin/GibMe-backend/config/firebase/messaging"
 	"github.com/Seriyin/GibMe-backend/config/firebase/paths"
+	"log"
 	"strconv"
 	"strings"
 )
@@ -85,15 +87,27 @@ func extractIndividualTos(
 		if err == nil {
 			dbPath := paths.ExtractAndReplaceMethodIdAndDatePath(profile.Id, networkPath)
 
-			_, err = db.SetMonetaryTransferByFullPath(ctx, m, dbPath)
+			//Add has side-effects and assigns a LinkedId to monetary transfer which
+			//is the first return param.
+			_, err = db.AddMonetaryTransferByFullPath(ctx, m, dbPath)
+
+			if err == nil {
+				err = produceAndSendNotification(
+					ctx,
+					profile,
+					m,
+				)
+				if err != nil {
+					log.Print(err)
+				}
+			} else {
+				log.Print(err)
+			}
+
+		} else {
+			log.Print(err)
 		}
 		//skip otherwise
-		err = produceAndSendNotification(
-			ctx,
-			profile,
-			&m,
-		)
-		return err
 	}
 	return monetaryTs
 }
