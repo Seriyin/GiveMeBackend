@@ -14,6 +14,7 @@ type MonetaryTransfer struct {
 	Currency      string    `firebase:"currency" json:"currency"`
 	ConfirmedFrom bool      `firebase:"confirmedFrom" json:"confirmedFrom"`
 	ConfirmedTo   bool      `firebase:"confirmedTo" json:"confirmedTo"`
+	Snowflake     string    `firebase:"snowflake" json:"snowflake"`
 	GroupId       int64     `firebase:"groupId" json:"groupId"`
 	RecurrentId   int64     `firebase:"recurrentId" json:"recurrentId"`
 }
