@@ -68,6 +68,19 @@ type GiveMeDatabase interface {
 
 	// Monetary Transfer methods
 
+	AddMonetaryTransfer(
+		ctx context.Context,
+		userId string,
+		transfer *MonetaryTransfer,
+		path string,
+	) (string, error)
+
+	AddMonetaryTransferByFullPath(
+		ctx context.Context,
+		transfer *MonetaryTransfer,
+		fullPath string,
+	) (string, error)
+
 	// GetMonetaryTransfer methods fetch appropriate instances of
 	// MonetaryTransfer from db.
 
@@ -141,5 +154,22 @@ type GiveMeDatabase interface {
 		ctx context.Context,
 		transfer []*MonetaryTransfer,
 		fullPath string,
+	) error
+
+	UpdateMonetaryTransferConfirmed(
+		ctx context.Context,
+		userId string,
+		confirmedFrom bool, //If false ignore
+		confirmedTo bool, //If false ignore
+		path string,
+		snowflake string,
+	) error
+
+	UpdateMonetaryTransferConfirmedByFullPath(
+		ctx context.Context,
+		confirmedFrom bool, //If false ignore
+		confirmedTo bool, //If false ignore
+		fullPath string,
+		snowflake string,
 	) error
 }

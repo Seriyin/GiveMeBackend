@@ -134,7 +134,7 @@ func (db *firestoreDB) AddProfile(
 	p *datastore.Profile,
 ) (string, error) {
 	doc := db.client.Collection(
-		"profiles",
+		"Profiles",
 	).Doc(p.Id)
 	_, err := doc.Create(ctx, p)
 	if err != nil {
@@ -152,7 +152,7 @@ func (db *firestoreDB) DeleteProfile(
 	userId string,
 ) error {
 	doc := db.client.Collection(
-		"profiles",
+		"Profiles",
 	).Doc(userId)
 	_, err := doc.Delete(ctx)
 	if err != nil {
@@ -170,7 +170,7 @@ func (db *firestoreDB) UpdateProfile(
 	p *datastore.Profile,
 ) error {
 	doc := db.client.Collection(
-		"profiles",
+		"Profiles",
 	).Doc(p.Id)
 	_, err := doc.Set(ctx, p, firestore.MergeAll)
 	if err != nil {
@@ -198,7 +198,7 @@ func (db *firestoreDB) RegenProfile(
 	p *datastore.Profile,
 ) error {
 	doc := db.client.Collection(
-		"profiles",
+		"Profiles",
 	).Doc(p.Id)
 	_, err := doc.Set(ctx, p)
 	if err != nil {
@@ -216,7 +216,7 @@ func (db *firestoreDB) IsBlocked(
 	blocked string,
 ) (bool, error) {
 	doc := db.client.Collection(
-		"blocked",
+		"Blocked",
 	).Doc(userId)
 	docSnap, err := doc.Get(ctx)
 	if err != nil {
@@ -238,6 +238,41 @@ func (db *firestoreDB) IsBlocked(
 		isBlocked = blockedP[i] == blocked
 	}
 	return isBlocked, nil
+}
+
+func (db *firestoreDB) AddMonetaryTransfer(
+	ctx context.Context,
+	userId string,
+	transfer *datastore.MonetaryTransfer,
+	path string,
+) (string, error) {
+	pathT := buildCollectionPath(userId, path)
+	return db.AddMonetaryTransferByFullPath(
+		ctx,
+		transfer,
+		pathT,
+	)
+}
+
+func (db *firestoreDB) AddMonetaryTransferByFullPath(
+	ctx context.Context,
+	transfer *datastore.MonetaryTransfer,
+	fullPath string,
+) (string, error) {
+	doc := db.client.Collection(
+		fullPath,
+	).NewDoc()
+	transfer.Snowflake = doc.ID
+	wr, err := doc.Set(ctx, transfer)
+	if err != nil {
+		return "", fmt.Errorf(
+			"datastoredb: failed to add monetary transfer in %v: %v %v",
+			fullPath,
+			wr,
+			err,
+		)
+	}
+	return doc.ID, err
 }
 
 func (db *firestoreDB) GetMonetaryTransferWithDate(
@@ -427,9 +462,10 @@ func (db *firestoreDB) SetMonetaryTransferByFullPath(
 	transfer *datastore.MonetaryTransfer,
 	fullPath string,
 ) (string, error) {
-	doc, wr, err := db.client.Collection(
+	doc := db.client.Collection(
 		fullPath,
-	).Add(ctx, transfer)
+	).Doc(transfer.Snowflake)
+	wr, err := doc.Set(ctx, transfer)
 	if err != nil {
 		return "", fmt.Errorf(
 			"datastoredb: failed to add monetary transfer in %v: %v %v",
@@ -465,7 +501,7 @@ func (db *firestoreDB) SetMonetaryTransfersByFullPath(
 		fullPath,
 	)
 	for _, transfer := range transfers {
-		doc := cl.NewDoc()
+		doc := cl.Doc(transfer.Snowflake)
 		batch.Set(doc, transfer)
 	}
 	_, err := batch.Commit(ctx)
@@ -476,10 +512,44 @@ func (db *firestoreDB) UpdateMonetaryTransferConfirmed(
 	ctx context.Context,
 	userId string,
 	confirmedFrom bool, //If false ignore
-	confirmedToo bool, //If false ignore
+	confirmedTo bool, //If false ignore
 	path string,
+	linkedId string,
 ) error {
-	panic("implement me")
+	pathT := buildCollectionPath(userId, path)
+	return db.UpdateMonetaryTransferConfirmedByFullPath(
+		ctx,
+		confirmedFrom,
+		confirmedTo,
+		pathT,
+		linkedId,
+	)
+}
+
+func (db *firestoreDB) UpdateMonetaryTransferConfirmedByFullPath(
+	ctx context.Context,
+	confirmedFrom bool, //If false ignore
+	confirmedTo bool, //If false ignore
+	fullPath string,
+	linkedId string,
+) error {
+	doc := db.client.Collection(
+		fullPath,
+	).Doc(linkedId)
+	wr, err := doc.Update(ctx, []firestore.Update{
+		{Path: "confirmedFrom", Value: confirmedFrom},
+		{Path: "confirmedTo", Value: confirmedTo},
+	})
+	if err != nil {
+		return fmt.Errorf(
+			"datastoredb: failed to update monetary transfer %v in %v: %v %v",
+			linkedId,
+			fullPath,
+			wr,
+			err,
+		)
+	}
+	return nil
 }
 
 func buildCollectionPathWithDate(

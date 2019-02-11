@@ -155,6 +155,23 @@ func (db *memoryDB) IsBlocked(
 	return isBlocked, nil
 }
 
+func (db *memoryDB) AddMonetaryTransfer(
+	ctx context.Context,
+	userId string,
+	transfer *MonetaryTransfer,
+	path string,
+) (string, error) {
+	panic("implement me")
+}
+
+func (db *memoryDB) AddMonetaryTransferByFullPath(
+	ctx context.Context,
+	transfer *MonetaryTransfer,
+	fullPath string,
+) (string, error) {
+	panic("implement me")
+}
+
 func (db *memoryDB) GetMonetaryTransferWithDate(
 	ctx context.Context,
 	userId string,
@@ -237,6 +254,27 @@ func (db *memoryDB) SetMonetaryTransfersByFullPath(
 	ctx context.Context,
 	transfer []*MonetaryTransfer,
 	fullPath string,
+) error {
+	panic("implement me")
+}
+
+func (db *memoryDB) UpdateMonetaryTransferConfirmed(
+	ctx context.Context,
+	userId string,
+	confirmedFrom bool, //If false ignore
+	confirmedTo bool, //If false ignore
+	path string,
+	snowflake string,
+) error {
+	panic("implement me")
+}
+
+func (db *memoryDB) UpdateMonetaryTransferConfirmedByFullPath(
+	ctx context.Context,
+	confirmedFrom bool, //If false ignore
+	confirmedTo bool, //If false ignore
+	fullPath string,
+	snowflake string,
 ) error {
 	panic("implement me")
 }
