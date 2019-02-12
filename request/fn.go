@@ -2,7 +2,6 @@ package request
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/Seriyin/GiveMeBackend/config/datastore"
 	"github.com/Seriyin/GiveMeBackend/config/firebase"
 	"github.com/Seriyin/GiveMeBackend/config/firebase/firestore"
@@ -18,8 +17,7 @@ func Request(
 	ctx context.Context,
 	e firestore.Event,
 ) error {
-	var monetaryT datastore.MonetaryRequest           // Monetary Structure object
-	err := json.Unmarshal(e.Value.Fields, &monetaryT) // Json object to Monetary Structure
+	monetaryT, err := firestore.UnmarshallAndConvertMonetary(e.Value.Fields) // Json object to Monetary Structure
 
 	log.Print("Attempted unmarshal")
 	if err != nil {
@@ -47,7 +45,7 @@ func Request(
 	_, err = db.SetMonetaryRequest(
 		ctx,
 		profile.Id,
-		&monetaryT,
+		monetaryT,
 		dbPath,
 	)
 	if err != nil {
@@ -57,7 +55,7 @@ func Request(
 	err = produceAndSendNotification(
 		ctx,
 		profile,
-		&monetaryT,
+		monetaryT,
 	)
 
 	log.Print("Attempted produce send notification")

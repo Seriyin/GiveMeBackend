@@ -2,7 +2,6 @@ package confirm
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 
 	"github.com/Seriyin/GiveMeBackend/config/datastore"
@@ -19,8 +18,9 @@ func Confirm(
 	ctx context.Context,
 	e firestore.Event,
 ) error {
-	var monetaryT datastore.MonetaryRequest           // Monetary Structure object
-	err := json.Unmarshal(e.Value.Fields, &monetaryT) // Json object to Monetary Structure
+	monetaryT, err :=
+		firestore.UnmarshallAndConvertMonetary(e.Value.Fields) // Json object to Monetary Structure
+
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func Confirm(
 			err = produceAndSendFromNotification(
 				ctx,
 				profile,
-				&monetaryT,
+				monetaryT,
 			)
 			return err
 		} else if a == "confirmedTo" {
@@ -74,7 +74,7 @@ func Confirm(
 			err = produceAndSendToNotification(
 				ctx,
 				profile,
-				&monetaryT,
+				monetaryT,
 			)
 			return err
 		}

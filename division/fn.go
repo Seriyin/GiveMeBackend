@@ -2,7 +2,6 @@ package division
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/Seriyin/GiveMeBackend/config/datastore"
 	"github.com/Seriyin/GiveMeBackend/config/firebase"
@@ -21,15 +20,15 @@ func Division(
 	ctx context.Context,
 	e firestore.Event,
 ) error {
-	var groupT datastore.GroupRequest
-	err := json.Unmarshal(e.Value.Fields, &groupT)
+	groupT, err :=
+		firestore.UnmarshallAndConvertGroup(e.Value.Fields) // Json object to Monetary Structure
 
 	log.Print("Attempted unmarshal")
 	if err != nil {
 		return err
 	}
 
-	newAmountUnit, newAmountCents, err := calculateResultingAmounts(&groupT)
+	newAmountUnit, newAmountCents, err := calculateResultingAmounts(groupT)
 
 	log.Print("Attempted division")
 	if err != nil {
@@ -42,7 +41,7 @@ func Division(
 	monetaryTs := extractIndividualTos(
 		ctx,
 		monPath,
-		&groupT,
+		groupT,
 		newAmountUnit,
 		newAmountCents,
 	)
