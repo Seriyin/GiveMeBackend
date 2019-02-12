@@ -11,5 +11,6 @@ var db = firebase.GetDB()
 func Register(
 	ctx context.Context,
 	e firestore.Event,
-) {
+) error {
+	return nil
 }

@@ -42,7 +42,7 @@ func Confirm(
 	for _, a := range e.UpdateMask.FieldPaths {
 		if a == "confirmedFrom" {
 
-			err = db.UpdateMonetaryTransferConfirmedByFullPath(
+			err = db.UpdateMonetaryRequestConfirmedByFullPath(
 				ctx,
 				true, //ConfirmedFrom
 				true, //ConfirmedTo
@@ -60,7 +60,7 @@ func Confirm(
 			)
 			return err
 		} else if a == "confirmedTo" {
-			err = db.UpdateMonetaryTransferConfirmedByFullPath(
+			err = db.UpdateMonetaryRequestConfirmedByFullPath(
 				ctx,
 				false, //ConfirmedFrom
 				true,  //ConfirmedTo

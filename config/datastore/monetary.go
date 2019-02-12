@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type MonetaryTransfer struct {
+type MonetaryRequest struct {
 	From          string    `firebase:"from" json:"from"`
 	To            string    `firebase:"to" json:"to"`
 	Desc          string    `firebase:"desc" json:"desc"`
@@ -19,7 +19,7 @@ type MonetaryTransfer struct {
 	RecurrentId   int64     `firebase:"recurrentId" json:"recurrentId"`
 }
 
-type GroupTransfer struct {
+type GroupRequest struct {
 	From        string    `firebase:"from" json:"from"`
 	Tos         []string  `firebase:"tos" json:"tos"`
 	Desc        string    `firebase:"desc" json:"desc"`
@@ -31,7 +31,7 @@ type GroupTransfer struct {
 	GroupId     int64     `firebase:"groupId" json:"groupId"`
 }
 
-type RecurrentTransfer struct {
+type RecurrentRequest struct {
 	RecurrentId int64 `firebase:"recurrent" json:"recurrent"`
 	Stamp       int64 `firebase:"stamp" json:"stamp"`
 	Concluded   bool  `firebase:"concluded" json:"concluded"`

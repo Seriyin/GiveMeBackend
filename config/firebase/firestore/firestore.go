@@ -240,23 +240,23 @@ func (db *firestoreDB) IsBlocked(
 	return isBlocked, nil
 }
 
-func (db *firestoreDB) AddMonetaryTransfer(
+func (db *firestoreDB) AddMonetaryRequest(
 	ctx context.Context,
 	userId string,
-	transfer *datastore.MonetaryTransfer,
+	transfer *datastore.MonetaryRequest,
 	path string,
 ) (string, error) {
 	pathT := buildCollectionPath(userId, path)
-	return db.AddMonetaryTransferByFullPath(
+	return db.AddMonetaryRequestByFullPath(
 		ctx,
 		transfer,
 		pathT,
 	)
 }
 
-func (db *firestoreDB) AddMonetaryTransferByFullPath(
+func (db *firestoreDB) AddMonetaryRequestByFullPath(
 	ctx context.Context,
-	transfer *datastore.MonetaryTransfer,
+	transfer *datastore.MonetaryRequest,
 	fullPath string,
 ) (string, error) {
 	doc := db.client.Collection(
@@ -275,12 +275,12 @@ func (db *firestoreDB) AddMonetaryTransferByFullPath(
 	return doc.ID, err
 }
 
-func (db *firestoreDB) GetMonetaryTransferWithDate(
+func (db *firestoreDB) GetMonetaryRequestWithDate(
 	ctx context.Context,
 	userId string,
 	date time.Time,
 	snowflake string,
-) (*datastore.MonetaryTransfer, error) {
+) (*datastore.MonetaryRequest, error) {
 	dt := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, time.UTC)
 	doc := db.client.Collection(
 		buildCollectionPathWithDate(userId, dt),
@@ -292,7 +292,7 @@ func (db *firestoreDB) GetMonetaryTransferWithDate(
 			err,
 		)
 	}
-	var mon datastore.MonetaryTransfer
+	var mon datastore.MonetaryRequest
 	err = docSnap.DataTo(&mon)
 	if err != nil {
 		return nil, fmt.Errorf(
@@ -303,12 +303,12 @@ func (db *firestoreDB) GetMonetaryTransferWithDate(
 	return &mon, nil
 }
 
-func (db *firestoreDB) GetMonetaryTransferWithDateString(
+func (db *firestoreDB) GetMonetaryRequestWithDateString(
 	ctx context.Context,
 	userId string,
 	date string,
 	snowflake string,
-) (*datastore.MonetaryTransfer, error) {
+) (*datastore.MonetaryRequest, error) {
 	doc := db.client.Collection(
 		buildCollectionPath(userId, date),
 	).Doc(snowflake)
@@ -319,7 +319,7 @@ func (db *firestoreDB) GetMonetaryTransferWithDateString(
 			err,
 		)
 	}
-	var mon datastore.MonetaryTransfer
+	var mon datastore.MonetaryRequest
 	err = docSnap.DataTo(&mon)
 	if err != nil {
 		return nil, fmt.Errorf(
@@ -330,12 +330,12 @@ func (db *firestoreDB) GetMonetaryTransferWithDateString(
 	return &mon, nil
 }
 
-func (db *firestoreDB) GetMonetaryTransfersDate(
+func (db *firestoreDB) GetMonetaryRequestsDate(
 	ctx context.Context,
 	userId string,
 	dateBefore time.Time,
-) ([]*datastore.MonetaryTransfer, error) {
-	pathRoot := "MonetaryTransfer/" + userId + "/"
+) ([]*datastore.MonetaryRequest, error) {
+	pathRoot := "MonetaryRequest/" + userId + "/"
 
 	now := time.Now()
 	dt := time.Date(
@@ -381,7 +381,7 @@ func collectFromDate(
 	path := pathRoot + dt.Format("2006-01")
 	docIter := db.client.Collection(path).Documents(ctx)
 	doc, err := docIter.Next()
-	var mon datastore.MonetaryTransfer
+	var mon datastore.MonetaryRequest
 	for ; err != iterator.Done; doc, err = docIter.Next() {
 		err = doc.DataTo(&mon)
 		if err != nil {
@@ -395,21 +395,21 @@ func collectFromDate(
 	}
 }
 
-func (db *firestoreDB) GetMonetaryTransfersInterval(
+func (db *firestoreDB) GetMonetaryRequestsInterval(
 	ctx context.Context,
 	userId string,
 	dateAfter time.Time,
 	dateBefore time.Time,
-) ([]*datastore.MonetaryTransfer, error) {
+) ([]*datastore.MonetaryRequest, error) {
 	panic("implement me")
 }
 
-func (db *firestoreDB) GetMonetaryTransfersFromGroup(
+func (db *firestoreDB) GetMonetaryRequestsFromGroup(
 	ctx context.Context,
 	userId string,
 	date time.Time,
 	groupId int64,
-) ([]*datastore.MonetaryTransfer, error) {
+) ([]*datastore.MonetaryRequest, error) {
 	dt := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, time.UTC)
 	docs, err := db.client.Collection(
 		buildCollectionPathWithDate(userId, dt),
@@ -420,9 +420,9 @@ func (db *firestoreDB) GetMonetaryTransfersFromGroup(
 			err,
 		)
 	}
-	mts := make([]*datastore.MonetaryTransfer, len(docs))
+	mts := make([]*datastore.MonetaryRequest, len(docs))
 	for _, r := range docs {
-		var mon datastore.MonetaryTransfer
+		var mon datastore.MonetaryRequest
 		err = r.DataTo(&mon)
 		if err != nil {
 			return nil, fmt.Errorf(
@@ -435,31 +435,31 @@ func (db *firestoreDB) GetMonetaryTransfersFromGroup(
 	return mts, nil
 }
 
-func (db *firestoreDB) GetMonetaryTransfersRecurrent(
+func (db *firestoreDB) GetMonetaryRequestsRecurrent(
 	ctx context.Context,
 	userId string,
 	recurrentId int64,
-) ([]*datastore.MonetaryTransfer, error) {
+) ([]*datastore.MonetaryRequest, error) {
 	panic("implement me")
 }
 
-func (db *firestoreDB) SetMonetaryTransfer(
+func (db *firestoreDB) SetMonetaryRequest(
 	ctx context.Context,
 	userId string,
-	transfer *datastore.MonetaryTransfer,
+	transfer *datastore.MonetaryRequest,
 	path string,
 ) (string, error) {
 	pathT := buildCollectionPath(userId, path)
-	return db.SetMonetaryTransferByFullPath(
+	return db.SetMonetaryRequestByFullPath(
 		ctx,
 		transfer,
 		pathT,
 	)
 }
 
-func (db *firestoreDB) SetMonetaryTransferByFullPath(
+func (db *firestoreDB) SetMonetaryRequestByFullPath(
 	ctx context.Context,
-	transfer *datastore.MonetaryTransfer,
+	transfer *datastore.MonetaryRequest,
 	fullPath string,
 ) (string, error) {
 	doc := db.client.Collection(
@@ -477,23 +477,23 @@ func (db *firestoreDB) SetMonetaryTransferByFullPath(
 	return doc.ID, err
 }
 
-func (db *firestoreDB) SetMonetaryTransfers(
+func (db *firestoreDB) SetMonetaryRequests(
 	ctx context.Context,
 	userId string,
-	transfers []*datastore.MonetaryTransfer,
+	transfers []*datastore.MonetaryRequest,
 	path string,
 ) error {
 	pathT := buildCollectionPath(userId, path)
-	return db.SetMonetaryTransfersByFullPath(
+	return db.SetMonetaryRequestsByFullPath(
 		ctx,
 		transfers,
 		pathT,
 	)
 }
 
-func (db *firestoreDB) SetMonetaryTransfersByFullPath(
+func (db *firestoreDB) SetMonetaryRequestsByFullPath(
 	ctx context.Context,
-	transfers []*datastore.MonetaryTransfer,
+	transfers []*datastore.MonetaryRequest,
 	fullPath string,
 ) error {
 	batch := db.client.Batch()
@@ -508,7 +508,7 @@ func (db *firestoreDB) SetMonetaryTransfersByFullPath(
 	return err
 }
 
-func (db *firestoreDB) UpdateMonetaryTransferConfirmed(
+func (db *firestoreDB) UpdateMonetaryRequestConfirmed(
 	ctx context.Context,
 	userId string,
 	confirmedFrom bool, //If false ignore
@@ -517,7 +517,7 @@ func (db *firestoreDB) UpdateMonetaryTransferConfirmed(
 	linkedId string,
 ) error {
 	pathT := buildCollectionPath(userId, path)
-	return db.UpdateMonetaryTransferConfirmedByFullPath(
+	return db.UpdateMonetaryRequestConfirmedByFullPath(
 		ctx,
 		confirmedFrom,
 		confirmedTo,
@@ -526,7 +526,7 @@ func (db *firestoreDB) UpdateMonetaryTransferConfirmed(
 	)
 }
 
-func (db *firestoreDB) UpdateMonetaryTransferConfirmedByFullPath(
+func (db *firestoreDB) UpdateMonetaryRequestConfirmedByFullPath(
 	ctx context.Context,
 	confirmedFrom bool, //If false ignore
 	confirmedTo bool, //If false ignore
@@ -566,7 +566,7 @@ func buildCollectionPath(
 ) string {
 	str := strings.Builder{}
 	str.Grow(len(userId) + 20)
-	str.WriteString("MoneyTransfer/")
+	str.WriteString("MonetaryRequest/")
 	str.WriteString(userId)
 	str.WriteByte('/')
 	str.WriteString(path)

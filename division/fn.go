@@ -44,7 +44,7 @@ func Division(
 	)
 
 	dbPath := paths.ExtractMethodIdAndDatePath(monPath)
-	err = db.SetMonetaryTransfersByFullPath(
+	err = db.SetMonetaryRequestsByFullPath(
 		ctx,
 		monetaryTs,
 		dbPath,
@@ -56,17 +56,17 @@ func Division(
 func extractIndividualTos(
 	ctx context.Context,
 	networkPath string,
-	groupT *datastore.GroupTransfer,
+	groupT *datastore.GroupRequest,
 	newAmountUnit int64,
 	newAmountCents int64,
-) []*datastore.MonetaryTransfer {
+) []*datastore.MonetaryRequest {
 	monetaryTs := make(
-		[]*datastore.MonetaryTransfer,
+		[]*datastore.MonetaryRequest,
 		len(groupT.Tos),
 	)
 
 	for _, to := range groupT.Tos {
-		m := &datastore.MonetaryTransfer{
+		m := &datastore.MonetaryRequest{
 			From:          groupT.From,
 			To:            to,
 			Desc:          groupT.Desc,
@@ -89,7 +89,7 @@ func extractIndividualTos(
 
 			//Add has side-effects and assigns a LinkedId to monetary transfer which
 			//is the first return param.
-			_, err = db.AddMonetaryTransferByFullPath(ctx, m, dbPath)
+			_, err = db.AddMonetaryRequestByFullPath(ctx, m, dbPath)
 
 			if err == nil {
 				err = produceAndSendNotification(
@@ -112,7 +112,7 @@ func extractIndividualTos(
 	return monetaryTs
 }
 
-func calculateResultingAmounts(groupT *datastore.GroupTransfer) (int64, int64, error) {
+func calculateResultingAmounts(groupT *datastore.GroupRequest) (int64, int64, error) {
 	totalValue := groupT.AmountUnit*100 + groupT.AmountCents
 
 	var newAmountUnit int64
@@ -153,7 +153,7 @@ func extractDivide(totalValue int64, groupNum int64) (int64, int64, error) {
 func produceAndSendNotification(
 	ctx context.Context,
 	profile *datastore.Profile,
-	transfer *datastore.MonetaryTransfer,
+	transfer *datastore.MonetaryRequest,
 ) error {
 	//generate notification message
 	token := profile.Token

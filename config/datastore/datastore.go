@@ -66,97 +66,97 @@ type GiveMeDatabase interface {
 	// Close closes the database, freeing up any available resources.
 	Close() error
 
-	// Monetary Transfer methods
+	// Monetary Request methods
 
-	AddMonetaryTransfer(
+	AddMonetaryRequest(
 		ctx context.Context,
 		userId string,
-		transfer *MonetaryTransfer,
+		transfer *MonetaryRequest,
 		path string,
 	) (string, error)
 
-	AddMonetaryTransferByFullPath(
+	AddMonetaryRequestByFullPath(
 		ctx context.Context,
-		transfer *MonetaryTransfer,
+		transfer *MonetaryRequest,
 		fullPath string,
 	) (string, error)
 
-	// GetMonetaryTransfer methods fetch appropriate instances of
-	// MonetaryTransfer from db.
+	// GetMonetaryRequest methods fetch appropriate instances of
+	// MonetaryRequest from db.
 
-	// GetMonetaryTransfer by unique id (snowflake).
-	GetMonetaryTransferWithDate(
+	// GetMonetaryRequest by unique id (snowflake).
+	GetMonetaryRequestWithDate(
 		ctx context.Context,
 		userId string,
 		date time.Time,
 		snowflake string,
-	) (*MonetaryTransfer, error)
+	) (*MonetaryRequest, error)
 
-	// GetMonetaryTransfer by unique id (snowflake).
-	GetMonetaryTransferWithDateString(
+	// GetMonetaryRequest by unique id (snowflake).
+	GetMonetaryRequestWithDateString(
 		ctx context.Context,
 		userId string,
 		date string,
 		snowflake string,
-	) (*MonetaryTransfer, error)
+	) (*MonetaryRequest, error)
 
-	// GetMonetaryTransfers by current date until dateBefore.
-	GetMonetaryTransfersDate(
+	// GetMonetaryRequests by current date until dateBefore.
+	GetMonetaryRequestsDate(
 		ctx context.Context,
 		userId string,
 		dateBefore time.Time,
-	) ([]*MonetaryTransfer, error)
+	) ([]*MonetaryRequest, error)
 
-	// GetMonetaryTransfers between two dates.
-	GetMonetaryTransfersInterval(
+	// GetMonetaryRequests between two dates.
+	GetMonetaryRequestsInterval(
 		ctx context.Context,
 		userId string,
 		dateAfter time.Time,
 		dateBefore time.Time,
-	) ([]*MonetaryTransfer, error)
+	) ([]*MonetaryRequest, error)
 
-	// GetMonetaryTransfers for a group transfer.
-	GetMonetaryTransfersFromGroup(
+	// GetMonetaryRequests for a group transfer.
+	GetMonetaryRequestsFromGroup(
 		ctx context.Context,
 		userId string,
 		date time.Time,
 		groupId int64,
-	) ([]*MonetaryTransfer, error)
+	) ([]*MonetaryRequest, error)
 
-	// GetMonetaryTransfers for a recurrent transfer.
-	GetMonetaryTransfersRecurrent(
+	// GetMonetaryRequests for a recurrent transfer.
+	GetMonetaryRequestsRecurrent(
 		ctx context.Context,
 		userId string,
 		recurrentId int64,
-	) ([]*MonetaryTransfer, error)
+	) ([]*MonetaryRequest, error)
 
-	SetMonetaryTransfer(
+	SetMonetaryRequest(
 		ctx context.Context,
 		userId string,
-		transfer *MonetaryTransfer,
+		transfer *MonetaryRequest,
 		path string,
 	) (string, error)
 
-	SetMonetaryTransferByFullPath(
+	SetMonetaryRequestByFullPath(
 		ctx context.Context,
-		transfer *MonetaryTransfer,
+		transfer *MonetaryRequest,
 		fullPath string,
 	) (string, error)
 
-	SetMonetaryTransfers(
+	SetMonetaryRequests(
 		ctx context.Context,
 		userId string,
-		transfer []*MonetaryTransfer,
+		transfer []*MonetaryRequest,
 		path string,
 	) error
 
-	SetMonetaryTransfersByFullPath(
+	SetMonetaryRequestsByFullPath(
 		ctx context.Context,
-		transfer []*MonetaryTransfer,
+		transfer []*MonetaryRequest,
 		fullPath string,
 	) error
 
-	UpdateMonetaryTransferConfirmed(
+	UpdateMonetaryRequestConfirmed(
 		ctx context.Context,
 		userId string,
 		confirmedFrom bool, //If false ignore
@@ -165,7 +165,7 @@ type GiveMeDatabase interface {
 		snowflake string,
 	) error
 
-	UpdateMonetaryTransferConfirmedByFullPath(
+	UpdateMonetaryRequestConfirmedByFullPath(
 		ctx context.Context,
 		confirmedFrom bool, //If false ignore
 		confirmedTo bool, //If false ignore

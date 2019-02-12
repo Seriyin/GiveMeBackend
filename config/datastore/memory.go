@@ -155,110 +155,110 @@ func (db *memoryDB) IsBlocked(
 	return isBlocked, nil
 }
 
-func (db *memoryDB) AddMonetaryTransfer(
+func (db *memoryDB) AddMonetaryRequest(
 	ctx context.Context,
 	userId string,
-	transfer *MonetaryTransfer,
+	transfer *MonetaryRequest,
 	path string,
 ) (string, error) {
 	panic("implement me")
 }
 
-func (db *memoryDB) AddMonetaryTransferByFullPath(
+func (db *memoryDB) AddMonetaryRequestByFullPath(
 	ctx context.Context,
-	transfer *MonetaryTransfer,
+	transfer *MonetaryRequest,
 	fullPath string,
 ) (string, error) {
 	panic("implement me")
 }
 
-func (db *memoryDB) GetMonetaryTransferWithDate(
+func (db *memoryDB) GetMonetaryRequestWithDate(
 	ctx context.Context,
 	userId string,
 	date time.Time,
 	snowflake string,
-) (*MonetaryTransfer, error) {
+) (*MonetaryRequest, error) {
 	panic("implement me")
 }
 
-func (db *memoryDB) GetMonetaryTransferWithDateString(
+func (db *memoryDB) GetMonetaryRequestWithDateString(
 	ctx context.Context,
 	userId string,
 	date string,
 	snowflake string,
-) (*MonetaryTransfer, error) {
+) (*MonetaryRequest, error) {
 	panic("implement me")
 }
 
-func (db *memoryDB) GetMonetaryTransfersDate(
+func (db *memoryDB) GetMonetaryRequestsDate(
 	ctx context.Context,
 	userId string,
 	dateBefore time.Time,
-) ([]*MonetaryTransfer, error) {
+) ([]*MonetaryRequest, error) {
 	panic("implement me")
 }
 
-func (db *memoryDB) GetMonetaryTransfersInterval(
+func (db *memoryDB) GetMonetaryRequestsInterval(
 	ctx context.Context,
 	userId string,
 	dateAfter time.Time,
 	dateBefore time.Time,
-) ([]*MonetaryTransfer, error) {
+) ([]*MonetaryRequest, error) {
 	panic("implement me")
 }
 
-func (db *memoryDB) GetMonetaryTransfersFromGroup(
+func (db *memoryDB) GetMonetaryRequestsFromGroup(
 	ctx context.Context,
 	userId string,
 	date time.Time,
 	groupId int64,
-) ([]*MonetaryTransfer, error) {
+) ([]*MonetaryRequest, error) {
 	panic("implement me")
 }
 
-func (db *memoryDB) GetMonetaryTransfersRecurrent(
+func (db *memoryDB) GetMonetaryRequestsRecurrent(
 	ctx context.Context,
 	userId string,
 	recurrentId int64,
-) ([]*MonetaryTransfer, error) {
+) ([]*MonetaryRequest, error) {
 	panic("implement me")
 }
 
-func (db *memoryDB) SetMonetaryTransfer(
+func (db *memoryDB) SetMonetaryRequest(
 	ctx context.Context,
 	userId string,
-	transfer *MonetaryTransfer,
+	transfer *MonetaryRequest,
 	path string,
 ) (string, error) {
 	panic("implement me")
 }
 
-func (db *memoryDB) SetMonetaryTransferByFullPath(
+func (db *memoryDB) SetMonetaryRequestByFullPath(
 	ctx context.Context,
-	transfer *MonetaryTransfer,
+	transfer *MonetaryRequest,
 	fullPath string,
 ) (string, error) {
 	panic("implement me")
 }
 
-func (db *memoryDB) SetMonetaryTransfers(
+func (db *memoryDB) SetMonetaryRequests(
 	ctx context.Context,
 	userId string,
-	transfer []*MonetaryTransfer,
+	transfer []*MonetaryRequest,
 	path string,
 ) error {
 	panic("implement me")
 }
 
-func (db *memoryDB) SetMonetaryTransfersByFullPath(
+func (db *memoryDB) SetMonetaryRequestsByFullPath(
 	ctx context.Context,
-	transfer []*MonetaryTransfer,
+	transfer []*MonetaryRequest,
 	fullPath string,
 ) error {
 	panic("implement me")
 }
 
-func (db *memoryDB) UpdateMonetaryTransferConfirmed(
+func (db *memoryDB) UpdateMonetaryRequestConfirmed(
 	ctx context.Context,
 	userId string,
 	confirmedFrom bool, //If false ignore
@@ -269,7 +269,7 @@ func (db *memoryDB) UpdateMonetaryTransferConfirmed(
 	panic("implement me")
 }
 
-func (db *memoryDB) UpdateMonetaryTransferConfirmedByFullPath(
+func (db *memoryDB) UpdateMonetaryRequestConfirmedByFullPath(
 	ctx context.Context,
 	confirmedFrom bool, //If false ignore
 	confirmedTo bool, //If false ignore

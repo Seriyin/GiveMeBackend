@@ -11,5 +11,6 @@ var db = firebase.GetDB()
 func Remind(
 	ctx context.Context,
 	e firestore.Event,
-) {
+) error {
+	return nil
 }

@@ -72,5 +72,5 @@ func ExtractMethodIdAndDatePathWithSnowflake(
 func TransformGroupIntoMonetary(
 	networkPath string,
 ) string {
-	return strings.Replace(networkPath, "GroupTransfers", "MonetaryTransfers", 1)
+	return strings.Replace(networkPath, "GroupRequests", "MonetaryRequests", 1)
 }
