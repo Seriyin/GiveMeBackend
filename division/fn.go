@@ -23,18 +23,22 @@ func Division(
 ) error {
 	var groupT datastore.GroupRequest
 	err := json.Unmarshal(e.Value.Fields, &groupT)
+
+	log.Print("Attempted unmarshal")
 	if err != nil {
 		return err
 	}
 
 	newAmountUnit, newAmountCents, err := calculateResultingAmounts(&groupT)
 
+	log.Print("Attempted division")
 	if err != nil {
 		return err
 	}
 
 	monPath := paths.TransformGroupIntoMonetary(e.Value.Name)
 
+	log.Printf("Transformed path: %v", monPath)
 	monetaryTs := extractIndividualTos(
 		ctx,
 		monPath,
@@ -44,6 +48,8 @@ func Division(
 	)
 
 	dbPath := paths.ExtractMethodIdAndDatePath(monPath)
+
+	log.Printf("Extracted db path: %v", dbPath)
 	err = db.SetMonetaryRequestsByFullPath(
 		ctx,
 		monetaryTs,

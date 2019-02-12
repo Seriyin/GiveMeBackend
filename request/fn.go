@@ -20,6 +20,8 @@ func Request(
 ) error {
 	var monetaryT datastore.MonetaryRequest           // Monetary Structure object
 	err := json.Unmarshal(e.Value.Fields, &monetaryT) // Json object to Monetary Structure
+
+	log.Print("Attempted unmarshal")
 	if err != nil {
 		return err
 	}
@@ -30,6 +32,8 @@ func Request(
 		ctx,
 		monetaryT.To,
 	)
+
+	log.Print("Attempted profile grab")
 	if err != nil {
 		return err
 	}
@@ -39,6 +43,7 @@ func Request(
 		e.Value.Name,
 	)
 
+	log.Printf("Extracted db path: %v", dbPath)
 	_, err = db.SetMonetaryRequest(
 		ctx,
 		profile.Id,
@@ -54,6 +59,8 @@ func Request(
 		profile,
 		&monetaryT,
 	)
+
+	log.Print("Attempted produce send notification")
 	return err
 }
 
