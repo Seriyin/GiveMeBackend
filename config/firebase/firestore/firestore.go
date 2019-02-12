@@ -11,7 +11,7 @@ import (
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
 
-	"github.com/Seriyin/GibMe-backend/config/datastore"
+	"github.com/Seriyin/GiveMeBackend/config/datastore"
 )
 
 type firestoreDB struct {

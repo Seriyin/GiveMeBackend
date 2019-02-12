@@ -4,8 +4,8 @@ import (
 	"context"
 	"firebase.google.com/go"
 	"firebase.google.com/go/messaging"
-	"github.com/Seriyin/GibMe-backend/config/datastore"
-	"github.com/Seriyin/GibMe-backend/config/firebase/firestore"
+	"github.com/Seriyin/GiveMeBackend/config/datastore"
+	"github.com/Seriyin/GiveMeBackend/config/firebase/firestore"
 	"log"
 )
 

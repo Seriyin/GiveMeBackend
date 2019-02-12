@@ -3,11 +3,11 @@ package request
 import (
 	"context"
 	"encoding/json"
-	"github.com/Seriyin/GibMe-backend/config/datastore"
-	"github.com/Seriyin/GibMe-backend/config/firebase"
-	"github.com/Seriyin/GibMe-backend/config/firebase/firestore"
-	"github.com/Seriyin/GibMe-backend/config/firebase/messaging"
-	"github.com/Seriyin/GibMe-backend/config/firebase/paths"
+	"github.com/Seriyin/GiveMeBackend/config/datastore"
+	"github.com/Seriyin/GiveMeBackend/config/firebase"
+	"github.com/Seriyin/GiveMeBackend/config/firebase/firestore"
+	"github.com/Seriyin/GiveMeBackend/config/firebase/messaging"
+	"github.com/Seriyin/GiveMeBackend/config/firebase/paths"
 	"log"
 )
 
