@@ -19,7 +19,7 @@ func Confirm(
 	ctx context.Context,
 	e firestore.Event,
 ) error {
-	var monetaryT datastore.MonetaryTransfer          // Monetary Structure object
+	var monetaryT datastore.MonetaryRequest           // Monetary Structure object
 	err := json.Unmarshal(e.Value.Fields, &monetaryT) // Json object to Monetary Structure
 	if err != nil {
 		return err
@@ -85,7 +85,7 @@ func Confirm(
 func produceAndSendFromNotification(
 	ctx context.Context,
 	profile *datastore.Profile,
-	transfer *datastore.MonetaryTransfer,
+	transfer *datastore.MonetaryRequest,
 ) error {
 	//generate notification message
 	token := profile.Token
@@ -107,7 +107,7 @@ func produceAndSendFromNotification(
 func produceAndSendToNotification(
 	ctx context.Context,
 	profile *datastore.Profile,
-	transfer *datastore.MonetaryTransfer,
+	transfer *datastore.MonetaryRequest,
 ) error {
 	//generate notification message
 	token := profile.Token

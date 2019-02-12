@@ -21,7 +21,7 @@ func Division(
 	ctx context.Context,
 	e firestore.Event,
 ) error {
-	var groupT datastore.GroupTransfer
+	var groupT datastore.GroupRequest
 	err := json.Unmarshal(e.Value.Fields, &groupT)
 	if err != nil {
 		return err
