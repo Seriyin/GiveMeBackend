@@ -203,7 +203,7 @@ func GenerateConfirmedToNotification(
 				Title: "Creditor confirmed payment",
 				Body: fmt.Sprintf(
 					"%v payed a debt of %v.%v%v",
-					from,
+					to,
 					amountUnits,
 					amountCents,
 					currency,

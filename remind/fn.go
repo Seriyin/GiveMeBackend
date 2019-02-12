@@ -2,8 +2,8 @@ package remind
 
 import (
 	"context"
-	"github.com/Seriyin/GibMe-backend/config/firebase"
-	"github.com/Seriyin/GibMe-backend/config/firebase/firestore"
+	"github.com/Seriyin/GiveMeBackend/config/firebase"
+	"github.com/Seriyin/GiveMeBackend/config/firebase/firestore"
 )
 
 var db = firebase.GetDB()
