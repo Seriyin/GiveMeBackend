@@ -11,7 +11,7 @@ type StringValue struct {
 }
 
 type IntegerValue struct {
-	IntegerValue int64 `json:"integerValue"`
+	IntegerValue int64 `json:"integerValue, string"`
 }
 
 type BooleanValue struct {
