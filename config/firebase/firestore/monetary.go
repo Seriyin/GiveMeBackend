@@ -44,7 +44,7 @@ func UnmarshallAndConvertMonetary(
 	}
 	date, err := time.Parse(
 		"2006-01-02T15:04:05",
-		strings.SplitN(mon.Date, ".", 1)[0],
+		strings.SplitN(mon.Date, ".", -1)[0],
 	)
 	return &datastore.MonetaryRequest{
 		From:          mon.From,
