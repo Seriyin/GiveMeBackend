@@ -1,6 +1,6 @@
 module github.com/Seriyin/GiveMeBackend/division
 
 require (
-	github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212232741-05e6d75c07ab // indirect
+	github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212233301-65fbf8b55adf // indirect
 	github.com/googleapis/gax-go v2.0.2+incompatible // indirect
 )
