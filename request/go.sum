@@ -16,6 +16,8 @@ github.com/Seriyin/GiveMeBackend v0.0.0-20190212204918-d058b4c25cb5 h1:G2i7FU0ZM
 github.com/Seriyin/GiveMeBackend v0.0.0-20190212232212-e4996efdff8b h1:ptKbHlHsfkhEvV9yRkehw9J5a3VRZ3W3netYDyP5Cxk=
 github.com/Seriyin/GiveMeBackend v0.0.0-20190212232741-05e6d75c07ab h1:iOUxXQN1czUg7vQUbqgsrMXm7Q/F2h3qr/Q3G/hWBtE=
 github.com/Seriyin/GiveMeBackend v0.0.0-20190212233301-65fbf8b55adf h1:IVpR7JoDkPTD6aZ+UNujY20lzbbTr7uY98/CBE/x7cw=
+github.com/Seriyin/GiveMeBackend v0.0.0-20190213003416-25f26e660d23 h1:dc//LrtP5JBmAlcgVbyUCH6uXPNyefW+Pg0mDzqvrcw=
+github.com/Seriyin/GiveMeBackend v0.0.0-20190213004648-c432362a37c5 h1:qawfz/ruqVmzKciAYWfhbq6e1YUIpbg+grpwHUdFLrc=
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212200441-86bf75fac653 h1:Rjk+1LugFNCp8HNVixaZOWyAQ81yot5mUo8JKXEzq44=
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212200441-86bf75fac653/go.mod h1:NMF8rKdef5TEs20UJwmZcvqjOw2q9k9mgBPc0FuiiI8=
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212204918-d058b4c25cb5 h1:5z24Q5OBqC9ClYWzVOndU2htXQMK/WGTtXiCfilm80I=
@@ -26,6 +28,10 @@ github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212232741-05e6d75c07ab h1:lx
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212232741-05e6d75c07ab/go.mod h1:HwZKeHFnmQXZmvGs8mCV2Hdr0G+RqtoMsidFebZeMss=
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212233301-65fbf8b55adf h1:c8eAATqoioEzU1SnHobUML1kZ49FM1228ulEx/kMJhk=
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212233301-65fbf8b55adf/go.mod h1:HwZKeHFnmQXZmvGs8mCV2Hdr0G+RqtoMsidFebZeMss=
+github.com/Seriyin/GiveMeBackend/config v0.0.0-20190213003416-25f26e660d23 h1:C3hjLzBEjshMGJ53wdDreanATU5bTTGA1S26JXEuFyw=
+github.com/Seriyin/GiveMeBackend/config v0.0.0-20190213003416-25f26e660d23/go.mod h1:HwZKeHFnmQXZmvGs8mCV2Hdr0G+RqtoMsidFebZeMss=
+github.com/Seriyin/GiveMeBackend/config v0.0.0-20190213004648-c432362a37c5 h1:4QtvcHLbMb2FJhEM7g6wZEdEujC8T1Fdd3934v+YH80=
+github.com/Seriyin/GiveMeBackend/config v0.0.0-20190213004648-c432362a37c5/go.mod h1:HwZKeHFnmQXZmvGs8mCV2Hdr0G+RqtoMsidFebZeMss=
 github.com/anmitsu/go-shlex v0.0.0-20161002113705-648efa622239/go.mod h1:2FmKhYUyUczH0OGQWaF5ceTx0UBShxjsH6f8oGKYe2c=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/bradfitz/go-smtpd v0.0.0-20170404230938-deb6d6237625/go.mod h1:HYsPBTaaSFSlLx/70C2HPIMNZpVV8+vt/A+FMnYP11g=
