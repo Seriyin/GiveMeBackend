@@ -42,9 +42,8 @@ func Request(
 	)
 
 	log.Printf("Extracted db path: %v", dbPath)
-	_, err = db.SetMonetaryRequest(
+	_, err = db.SetMonetaryRequestByFullPath(
 		ctx,
-		profile.Id,
 		monetaryT,
 		dbPath,
 	)
