@@ -3,35 +3,50 @@ package firestore
 import (
 	"encoding/json"
 	"github.com/Seriyin/GiveMeBackend/config/datastore"
-	"strings"
 	"time"
 )
 
+type StringValue struct {
+	StringValue string `json:"stringValue"`
+}
+
+type IntegerValue struct {
+	IntegerValue int64 `json:"integerValue"`
+}
+
+type BooleanValue struct {
+	BooleanValue bool `json:"booleanValue"`
+}
+
+type TimestampValue struct {
+	TimestampValue time.Time `json:"timestampValue"`
+}
+
 type monetaryRequest struct {
-	From          string `json:"from"`
-	To            string `json:"to"`
-	Desc          string `json:"desc"`
-	Date          string `json:"date"`
-	AmountUnit    int64  `json:"amountUnit"`
-	AmountCents   int64  `json:"amountCents"`
-	Currency      string `json:"currency"`
-	ConfirmedFrom bool   `json:"confirmedFrom"`
-	ConfirmedTo   bool   `json:"confirmedTo"`
-	Snowflake     string `json:"snowflake"`
-	GroupId       int64  `json:"groupId"`
-	RecurrentId   int64  `json:"recurrentId"`
+	From          StringValue    `json:"from"`
+	To            StringValue    `json:"to"`
+	Desc          StringValue    `json:"desc"`
+	Date          TimestampValue `json:"date"`
+	AmountUnit    IntegerValue   `json:"amountUnit"`
+	AmountCents   IntegerValue   `json:"amountCents"`
+	Currency      StringValue    `json:"currency"`
+	ConfirmedFrom BooleanValue   `json:"confirmedFrom"`
+	ConfirmedTo   BooleanValue   `json:"confirmedTo"`
+	Snowflake     StringValue    `json:"snowflake"`
+	GroupId       IntegerValue   `json:"groupId"`
+	RecurrentId   IntegerValue   `json:"recurrentId"`
 }
 
 type groupRequest struct {
-	From        string   `json:"from"`
-	Tos         []string `json:"tos"`
-	Desc        string   `json:"desc"`
-	Date        string   `json:"date"`
-	Included    bool     `json:"included"`
-	AmountUnit  int64    `json:"amountUnit"`
-	AmountCents int64    `json:"amountCents"`
-	Currency    string   `json:"currency"`
-	GroupId     int64    `json:"groupId"`
+	From        StringValue    `json:"from"`
+	Tos         []StringValue  `json:"tos"`
+	Desc        StringValue    `json:"desc"`
+	Date        TimestampValue `json:"date"`
+	Included    BooleanValue   `json:"included"`
+	AmountUnit  IntegerValue   `json:"amountUnit"`
+	AmountCents IntegerValue   `json:"amountCents"`
+	Currency    StringValue    `json:"currency"`
+	GroupId     IntegerValue   `json:"groupId"`
 }
 
 func UnmarshallAndConvertMonetary(
@@ -42,23 +57,25 @@ func UnmarshallAndConvertMonetary(
 	if err != nil {
 		return nil, err
 	}
+	/**
 	date, err := time.Parse(
 		"2006-01-02T15:04:05",
 		strings.SplitN(mon.Date, ".", -1)[0],
 	)
+	*/
 	return &datastore.MonetaryRequest{
-		From:          mon.From,
-		To:            mon.To,
-		Desc:          mon.Desc,
-		Date:          date,
-		AmountUnit:    mon.AmountUnit,
-		AmountCents:   mon.AmountCents,
-		Currency:      mon.Currency,
-		ConfirmedFrom: mon.ConfirmedFrom,
-		ConfirmedTo:   mon.ConfirmedTo,
-		Snowflake:     mon.Snowflake,
-		GroupId:       mon.GroupId,
-		RecurrentId:   mon.RecurrentId,
+		From:          mon.From.StringValue,
+		To:            mon.To.StringValue,
+		Desc:          mon.Desc.StringValue,
+		Date:          mon.Date.TimestampValue,
+		AmountUnit:    mon.AmountUnit.IntegerValue,
+		AmountCents:   mon.AmountCents.IntegerValue,
+		Currency:      mon.Currency.StringValue,
+		ConfirmedFrom: mon.ConfirmedFrom.BooleanValue,
+		ConfirmedTo:   mon.ConfirmedTo.BooleanValue,
+		Snowflake:     mon.Snowflake.StringValue,
+		GroupId:       mon.GroupId.IntegerValue,
+		RecurrentId:   mon.RecurrentId.IntegerValue,
 	}, nil
 }
 
@@ -70,19 +87,25 @@ func UnmarshallAndConvertGroup(
 	if err != nil {
 		return nil, err
 	}
+	/**
 	date, err := time.Parse(
 		"2006-01-02T15:04:05",
 		strings.SplitN(grp.Date, ".", 1)[0],
 	)
+	*/
+	tos := make([]string, len(grp.Tos))
+	for _, to := range grp.Tos {
+		tos = append(tos, to.StringValue)
+	}
 	return &datastore.GroupRequest{
-		From:        grp.From,
-		Tos:         grp.Tos,
-		Desc:        grp.Desc,
-		Date:        date,
-		Included:    grp.Included,
-		AmountUnit:  grp.AmountUnit,
-		AmountCents: grp.AmountCents,
-		Currency:    grp.Currency,
-		GroupId:     grp.GroupId,
+		From:        grp.From.StringValue,
+		Tos:         tos,
+		Desc:        grp.Desc.StringValue,
+		Date:        grp.Date.TimestampValue,
+		Included:    grp.Included.BooleanValue,
+		AmountUnit:  grp.AmountUnit.IntegerValue,
+		AmountCents: grp.AmountCents.IntegerValue,
+		Currency:    grp.Currency.StringValue,
+		GroupId:     grp.GroupId.IntegerValue,
 	}, nil
 }
