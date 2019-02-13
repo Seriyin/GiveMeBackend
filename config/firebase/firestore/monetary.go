@@ -57,12 +57,6 @@ func UnmarshallAndConvertMonetary(
 	if err != nil {
 		return nil, err
 	}
-	/**
-	date, err := time.Parse(
-		"2006-01-02T15:04:05",
-		strings.SplitN(mon.Date, ".", -1)[0],
-	)
-	*/
 	return &datastore.MonetaryRequest{
 		From:          mon.From.StringValue,
 		To:            mon.To.StringValue,
@@ -87,12 +81,6 @@ func UnmarshallAndConvertGroup(
 	if err != nil {
 		return nil, err
 	}
-	/**
-	date, err := time.Parse(
-		"2006-01-02T15:04:05",
-		strings.SplitN(grp.Date, ".", 1)[0],
-	)
-	*/
 	tos := make([]string, len(grp.Tos))
 	for _, to := range grp.Tos {
 		tos = append(tos, to.StringValue)
