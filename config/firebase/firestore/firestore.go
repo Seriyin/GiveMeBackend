@@ -113,7 +113,7 @@ func (db *firestoreDB) GetProfileIdByPhoneNumber(
 	phoneNumber string,
 ) (string, error) {
 	docs := db.client.Collection("Profiles").Where(
-		"id",
+		"phone",
 		"==",
 		phoneNumber,
 	).Documents(ctx)
