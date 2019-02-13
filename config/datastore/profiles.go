@@ -20,5 +20,5 @@ type UID struct {
 
 type Metadata struct {
 	PaymentProviders []PaymentProvider `firestore:"paymentProviders" json:"paymentProviders"`
-	NumberPayments   uint64            `firestore:"numberPayments" json:"numberPayments"`
+	NumberPayments   int64             `firestore:"numberPayments" json:"numberPayments"`
 }
