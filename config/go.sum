@@ -18,6 +18,7 @@ github.com/Seriyin/GiveMeBackend v0.0.0-20190212232741-05e6d75c07ab h1:iOUxXQN1c
 github.com/Seriyin/GiveMeBackend v0.0.0-20190213003416-25f26e660d23 h1:dc//LrtP5JBmAlcgVbyUCH6uXPNyefW+Pg0mDzqvrcw=
 github.com/Seriyin/GiveMeBackend v0.0.0-20190213004648-c432362a37c5 h1:qawfz/ruqVmzKciAYWfhbq6e1YUIpbg+grpwHUdFLrc=
 github.com/Seriyin/GiveMeBackend v0.0.0-20190213004824-171f30453c32 h1:xIF0ytAU8HyyWpQRipRDXw8N9iy1Wz3Z1gI7D0w0Krc=
+github.com/Seriyin/GiveMeBackend v0.0.0-20190213012506-f12c2d6e2784 h1:LNLbX3m9huYn+9R4dpgv1wcyCBjz27hfJuJtutzRuvY=
 github.com/anmitsu/go-shlex v0.0.0-20161002113705-648efa622239/go.mod h1:2FmKhYUyUczH0OGQWaF5ceTx0UBShxjsH6f8oGKYe2c=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/bradfitz/go-smtpd v0.0.0-20170404230938-deb6d6237625/go.mod h1:HYsPBTaaSFSlLx/70C2HPIMNZpVV8+vt/A+FMnYP11g=
