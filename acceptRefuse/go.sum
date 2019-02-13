@@ -24,6 +24,7 @@ github.com/Seriyin/GiveMeBackend v0.0.0-20190213012637-1d10b37b5662 h1:2pBAy/QBP
 github.com/Seriyin/GiveMeBackend v0.0.0-20190213015538-1444880b6ad5 h1:1q60w6VPou5glFpWbQm0PL2xUA45VaraIWshYkZi6jk=
 github.com/Seriyin/GiveMeBackend v0.0.0-20190213021236-eeec03800909 h1:5xkQhxwNx5V8q1z7u5BliQ9RuLctHgQrxS2BI7daqFo=
 github.com/Seriyin/GiveMeBackend v0.0.0-20190213030622-2fcbfb8ddc66 h1:kAx55VX9j92LBGFAi0Tybrph/jUlvBDxEMrhqjAz/fo=
+github.com/Seriyin/GiveMeBackend v0.0.0-20190213115352-2bf309bf9f90 h1:l5i5EdM+CgHkKmm+bGHqwjLuIRzTKDXM7NUd99vN7cg=
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212200441-86bf75fac653 h1:Rjk+1LugFNCp8HNVixaZOWyAQ81yot5mUo8JKXEzq44=
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212200441-86bf75fac653/go.mod h1:NMF8rKdef5TEs20UJwmZcvqjOw2q9k9mgBPc0FuiiI8=
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190212204918-d058b4c25cb5 h1:5z24Q5OBqC9ClYWzVOndU2htXQMK/WGTtXiCfilm80I=
@@ -50,6 +51,8 @@ github.com/Seriyin/GiveMeBackend/config v0.0.0-20190213021236-eeec03800909 h1:YN
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190213021236-eeec03800909/go.mod h1:HwZKeHFnmQXZmvGs8mCV2Hdr0G+RqtoMsidFebZeMss=
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190213030622-2fcbfb8ddc66 h1:396wICpCOqbUJQ36k9tE7EWzEJJpx79qL230V/hH2bU=
 github.com/Seriyin/GiveMeBackend/config v0.0.0-20190213030622-2fcbfb8ddc66/go.mod h1:HwZKeHFnmQXZmvGs8mCV2Hdr0G+RqtoMsidFebZeMss=
+github.com/Seriyin/GiveMeBackend/config v0.0.0-20190213115352-2bf309bf9f90 h1:6zVcqoavfEfkP3lpXZcQCE5e+I+Okw67lnJR0sz1y6k=
+github.com/Seriyin/GiveMeBackend/config v0.0.0-20190213115352-2bf309bf9f90/go.mod h1:HwZKeHFnmQXZmvGs8mCV2Hdr0G+RqtoMsidFebZeMss=
 github.com/anmitsu/go-shlex v0.0.0-20161002113705-648efa622239/go.mod h1:2FmKhYUyUczH0OGQWaF5ceTx0UBShxjsH6f8oGKYe2c=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/bradfitz/go-smtpd v0.0.0-20170404230938-deb6d6237625/go.mod h1:HYsPBTaaSFSlLx/70C2HPIMNZpVV8+vt/A+FMnYP11g=
