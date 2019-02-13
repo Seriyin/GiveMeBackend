@@ -13,11 +13,13 @@ func ExtractAndReplaceMethodIdAndDatePath(
 	// so it gets the path next to the creditor ID
 	// to be replaced by the debtor ID, so it inserts on the correct collection.
 
-	//Split at gcpstuff in [0] and full db path in [1].
-	path := strings.Split(networkPath, "/documents/")[1]
+	//Split at gcpstuff in [0] and full db path in [1] -> {Root}/{Uid}/{Date}/{Snowflake}.
+	//Extract everything but snowflake.
+	splits := strings.Split(strings.Split(networkPath, "/documents/")[1], "/")[:3]
 	//Split by collection and extract [1] which should be fromId.
-	fromId := strings.Split(path, "/")[1]
-	dbPath := strings.Replace(path, fromId, id, 1)
+	fromId := splits[1]
+
+	dbPath := strings.Replace(strings.Join(splits, "/"), fromId, id, 1)
 
 	return dbPath
 }
@@ -31,14 +33,15 @@ func ExtractAndReplaceMethodIdAndDatePathWithSnowflake(
 	// so it gets the path next to the creditor ID
 	// to be replaced by the debtor ID, so it inserts on the correct collection.
 
-	//Split at gcpstuff in [0] and full db path in [1].
+	//Split at gcpstuff in [0] and full db path in [1] -> {Root}/{Uid}/{Date}/{Snowflake}.
 	path := strings.Split(networkPath, "/documents/")[1]
 	//Split by collection and extract [1] which should be fromId.
 	pathSplits := strings.Split(path, "/")
 	fromId := pathSplits[1]
 	//Extract [3] which is document unique id.
 	docId := pathSplits[3]
-	dbPath := strings.Replace(path, fromId, id, 1)
+	//Extract everything but snowflake.
+	dbPath := strings.Replace(strings.Join(pathSplits[:3], "/"), fromId, id, 1)
 
 	return docId, dbPath
 }
@@ -51,8 +54,15 @@ func ExtractMethodIdAndDatePath(
 	// so it gets the path next to the creditor ID
 	// to be replaced by the debtor ID, so it inserts on the correct collection.
 
-	//Split at gcpstuff in [0] and full db path in [1].
-	return strings.Split(networkPath, "/documents/")[1]
+	//Split at gcpstuff in [0] and full db path in [1] -> {Root}/{Uid}/{Date}/{Snowflake}.
+	path := strings.Split(networkPath, "/documents/")[1]
+	//Split by collection and extract [1] which should be fromId.
+	splits := strings.Split(path, "/")[:3]
+
+	//Extract everything but snowflake.
+	dbPath := strings.Join(splits, "/")
+
+	return dbPath
 }
 
 func ExtractMethodIdAndDatePathWithSnowflake(
@@ -63,14 +73,17 @@ func ExtractMethodIdAndDatePathWithSnowflake(
 	// so it gets the path next to the creditor ID
 	// to be replaced by the debtor ID, so it inserts on the correct collection.
 
-	//Split at gcpstuff in [0] and full db path in [1].
+	//Split at gcpstuff in [0] and full db path in [1] -> {Root}/{Uid}/{Date}/{Snowflake}.
 	path := strings.Split(networkPath, "/documents/")[1]
 	splits := strings.Split(path, "/")
-	return splits[3], path
+
+	dbPath := strings.Join(splits[:3], "/")
+
+	return splits[3], dbPath
 }
 
 func TransformGroupIntoMonetary(
-	networkPath string,
+	groupPath string,
 ) string {
-	return strings.Replace(networkPath, "GroupRequests", "MonetaryRequests", 1)
+	return strings.Replace(groupPath, "GroupRequests", "MonetaryRequests", 1)
 }
